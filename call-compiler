@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+
+# this script centralizes the ability of the server
+# to call compilers in the docker container.
+# It accepts 2 inputs, the compiler and the filename,
+# and allows for standard compiler calls, but doesn't 
+# allow for special compiler options.
+ 
+compiler=$1
+file=$2
+
+if [[ $compiler -eq "python" ]]; then
+    python3 $file > py-output.txt
+    
+elif [[ $compiler -eq "go" ]]; then
+    gccgo $file -o cgo
+    ./cgo > go-output.txt
+    
+elif [[ $compiler -eq "fortran" ]]; then
+    gfortran $file -o cfortran
+    ./cfortran > fortran-output.txt
+
+elif [[ $compiler -eq "rust" ]]; then
+    rustc $file -o crust
+    ./crust > rust-output.txt
+
+elif [[ $compiler -eq "java" ]]; then
+    javac $file 
+    java "$file".class > java-output.txt
+
+elif [[ $compiler -eq "objc" ]]; then
+    #this requires the packages gnustep and 
+    # gnustep-devel to be installed, and
+    #`. /usr/share/GNUstep/Makefiles/GNUstep.sh`
+    # to be added to .bashrc
+    gcc `gnustep-config --objc-flags` -lgnustep-base $file -o cobjc
+    ./cobjc > objc-output.txt
+
+elif [[ $compiler -eq "ada" ]]; then
+    gnatgcc $file
+    ./"$file".o > ada-output.txt
+
+elif [[ $compiler -eq "cpp" ]]; then
+    g++ -std=c++14 $file -o ccpp
+    ./ccpp > cpp-output.txt
+
+elif [[ $compiler -eq "c" ]]; then
+    gcc -std=c18 $file -o cclang
+    ./cclang > c-output.txt
+    
+elif [[ $compiler -eq "ruby" ]]; then
+    ruby $file > ruby-output.txt
+
+elif [[ $compiler -eq "js" ]]; then
+    js $file > js-output.txt
+
+elif [[ $compiler -eq "lua" ]]; then
+    lua $file > lua-output.txt
+
+else
+    echo "That compiler does not exist or is not available"
+fi
