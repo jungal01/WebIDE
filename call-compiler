@@ -27,7 +27,7 @@ elif [[ "$compiler" = "rust" ]]; then
 
 elif [[ "$compiler" = "java" ]]; then
     javac $file 
-    temp=${object^}
+    temp=${object^} 
     java $temp > java-output.txt
 
 elif [[ "$compiler" = "objc" ]]; then
