@@ -38,7 +38,7 @@ elif [[ "$compiler" = "objc" ]]; then
 
 elif [[ "$compiler" = "ada" ]]; then
     gnat make $file
-    #./"$file" > ada-output.txt
+    ./"$file" > ada-output.txt
 
 elif [[ "$compiler" = "cpp" ]]; then
     g++ -std=c++14 $file -o ccpp
