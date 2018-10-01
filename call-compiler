@@ -9,26 +9,26 @@
 compiler=$1
 file=$2
 
-if [[ $compiler -eq "python" ]]; then
+if [[ "$compiler" = "python" ]]; then
     python3 $file > py-output.txt
     
-elif [[ $compiler -eq "go" ]]; then
+elif [[ "$compiler" = "go" ]]; then
     gccgo $file -o cgo
     ./cgo > go-output.txt
     
-elif [[ $compiler -eq "fortran" ]]; then
-    gfortran $file -o cfortran
+elif [[ "$compiler" = "fortran" ]]; then
+    gfortran -std=f2008 $file -o cfortran
     ./cfortran > fortran-output.txt
 
-elif [[ $compiler -eq "rust" ]]; then
+elif [[ "$compiler" = "rust" ]]; then
     rustc $file -o crust
     ./crust > rust-output.txt
 
-elif [[ $compiler -eq "java" ]]; then
+elif [[ "$compiler" = "java" ]]; then
     javac $file 
     java "$file".class > java-output.txt
 
-elif [[ $compiler -eq "objc" ]]; then
+elif [[ "$compiler" = "objc" ]]; then
     #this requires the packages gnustep and 
     # gnustep-devel to be installed, and
     #`. /usr/share/GNUstep/Makefiles/GNUstep.sh`
@@ -36,26 +36,26 @@ elif [[ $compiler -eq "objc" ]]; then
     gcc `gnustep-config --objc-flags` -lgnustep-base $file -o cobjc
     ./cobjc > objc-output.txt
 
-elif [[ $compiler -eq "ada" ]]; then
-    gnatgcc $file
-    ./"$file".o > ada-output.txt
+elif [[ "$compiler" = "ada" ]]; then
+    gnat make $file
+    #./"$file" > ada-output.txt
 
-elif [[ $compiler -eq "cpp" ]]; then
+elif [[ "$compiler" = "cpp" ]]; then
     g++ -std=c++14 $file -o ccpp
     ./ccpp > cpp-output.txt
 
-elif [[ $compiler -eq "c" ]]; then
+elif [[ "$compiler" = "c" ]]; then
     gcc -std=c18 $file -o cclang
     ./cclang > c-output.txt
     
-elif [[ $compiler -eq "ruby" ]]; then
+elif [[ "$compiler" = "ruby" ]]; then
     ruby $file > ruby-output.txt
 
-elif [[ $compiler -eq "js" ]]; then
+elif [[ "$compiler" = "js" ]]; then
     js $file > js-output.txt
 
-elif [[ $compiler -eq "lua" ]]; then
-    lua $file > lua-output.txt
+elif [[ "$compiler" = "lua" ]]; then
+    lua5.3 $file > lua-output.txt
 
 else
     echo "That compiler does not exist or is not available"
