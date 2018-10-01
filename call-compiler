@@ -9,7 +9,6 @@
 compiler=$1
 file=$2
 object=${file%.*}
-echo $object
 
 if [[ "$compiler" = "python" ]]; then
     python3 $file > py-output.txt
@@ -28,7 +27,8 @@ elif [[ "$compiler" = "rust" ]]; then
 
 elif [[ "$compiler" = "java" ]]; then
     javac $file 
-    java "$object".class > java-output.txt
+    temp=${object^}
+    java $temp > java-output.txt
 
 elif [[ "$compiler" = "objc" ]]; then
     #this requires the packages gnustep and 
