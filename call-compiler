@@ -8,6 +8,8 @@
  
 compiler=$1
 file=$2
+object=${file%.*}
+echo $object
 
 if [[ "$compiler" = "python" ]]; then
     python3 $file > py-output.txt
@@ -26,7 +28,7 @@ elif [[ "$compiler" = "rust" ]]; then
 
 elif [[ "$compiler" = "java" ]]; then
     javac $file 
-    java "$file".class > java-output.txt
+    java "$object".class > java-output.txt
 
 elif [[ "$compiler" = "objc" ]]; then
     #this requires the packages gnustep and 
@@ -38,7 +40,7 @@ elif [[ "$compiler" = "objc" ]]; then
 
 elif [[ "$compiler" = "ada" ]]; then
     gnat make $file
-    ./"$file" > ada-output.txt
+    ./"$object" > ada-output.txt
 
 elif [[ "$compiler" = "cpp" ]]; then
     g++ -std=c++14 $file -o ccpp
