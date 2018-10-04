@@ -22,8 +22,8 @@ elif [[ "$compiler" = "fortran" ]]; then
     ./cfortran > fortran-output.txt
 
 elif [[ "$compiler" = "rust" ]]; then
-    # has to be installed seperately and
-    # needs .cargo/bin to be added to PATH
+    # needs to be installed manually and add 
+    # .cargo/bin to PATH 
     rustc $file -o crust
     ./crust > rust-output.txt
 
