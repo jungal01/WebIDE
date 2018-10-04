@@ -17,9 +17,9 @@ def hello_world():
     os.system("docker run -name='Hello' hello-world > hello.txt")
     hello = read_output('hello.txt')
     # currently non functioning, but should stop the container named hello However, it does not return an output if this is done, though it does appear to stop
-    # os.system('docker stop hello')
+    os.system('docker stop hello')
     # this is the command to remove a docker container
-    #os.system('docker rm hello')
+    os.system('docker rm hello')
     # I was using the info.txt to actually see if the docker was running or not
     os.system('docker info > info.txt')
     info = read_output('info.txt')
