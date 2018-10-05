@@ -1,8 +1,8 @@
-Containers: 8
- Running: 1
+Containers: 5
+ Running: 0
  Paused: 0
- Stopped: 7
-Images: 14
+ Stopped: 5
+Images: 9
 Server Version: 18.06.1-ce
 Storage Driver: overlay2
  Backing Filesystem: extfs

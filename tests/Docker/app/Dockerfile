@@ -6,7 +6,7 @@ COPY . /app
 
 RUN pip3 install --trusted-host pypi.python.org -r requirements.txt
 
-EXPOSE 80
+EXPOSE 5000
 
 ENV NAME World
 
