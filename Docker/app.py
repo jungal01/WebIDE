@@ -30,6 +30,7 @@ def hello_world():
     
     # I was using the info.txt to actually see if the docker was
     # running or not
+
     os.system('docker info > info.txt')
     info = read_output('info.txt')
     
