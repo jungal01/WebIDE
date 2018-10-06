@@ -1,0 +1,18 @@
+textarea{
+    padding-left: 40px;
+    background-color: black;
+    color: rgb(0, 255, 0);
+}
+
+span {
+    padding-left: 30px;
+}
+
+div {
+    padding-top: 30px;
+}
+
+output {
+    padding-left: 30px;
+    color: rgb(0, 214, 0);
+}
