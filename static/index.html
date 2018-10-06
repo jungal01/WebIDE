@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
+    <meta charset="utf-8" />
     <title>Senior Project</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
@@ -47,15 +48,11 @@
     </nav>
        
     <div class="container-fluid">
-        <span><textarea rows="10" cols="50" class="ace_text-input" placeholder="Type in your code here" id="codeBox01" spellcheck="false" autocorrect='false'></textarea></span>
+        <button onclick="send.sendit();">Run</button>
+        <span><textarea rows="20" cols="50" class="ace_text-input" placeholder="Type in your code here" id="codeBox01" spellcheck="false" autocorrect='false'></textarea></span>
         <output id='out01'>where code is output</output>
     </div>
 
-    <div class="container-fluid align-top">
-        <span><textarea rows="10" cols="50" class='ace_text-input' placeholder="Type in your code here" id="codeBox02" spellcheck="false" autocorrect='false'></textarea></span>
-        <output id='out02'>where code is output</output>
-    </div>
-    
     <h3 style="text-align:center">--Senior Project--</h3>
 </body>
 </html>
