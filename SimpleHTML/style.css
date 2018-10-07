@@ -22,11 +22,11 @@ html {
 }
 
 body {
-    padding-top: 3px;
+    padding-top: 5px;
     background-color: #ffeee3;
 }
 
 #buttonRUN{
-    padding-left: 50px;
+    /*padding-left: 50px;*/
 }
 
