@@ -1,5 +1,5 @@
 from flask import Flask, request, render_template, make_response
-import wtforms
+import json
 import os
 
 app=Flask(__name__)
@@ -11,7 +11,7 @@ def index():
 
 @app.route('/compile', methods=['GET','POST'])
 def compile():
-    txt = str(request.form('codeBox01'))
+    txt = str(request.form.get('codeBox01'))
     with open('py-code.py','w') as f:
         print(txt)
         f.write(txt)
@@ -19,7 +19,8 @@ def compile():
     os.system('./call-compiler python py-code.py')
     rv = ''
     with open('py-output.txt', 'r') as f:
-        rv = f
+        a = f.read()
+        rv = a
         f.close()
     return render_template('index.html', 
                            output = rv)
