@@ -4,14 +4,14 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
 import { TextboxCOMPComponent } from './textbox-comp/textbox-comp.component';
-import { CodemirrorTextboxComponent } from './codemirror-textbox/codemirror-textbox.component';
+import { HeaderTabsComponent } from './header-tabs/header-tabs.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HeaderComponent,
     TextboxCOMPComponent,
-    CodemirrorTextboxComponent
+    HeaderTabsComponent
   ],
   imports: [
     BrowserModule

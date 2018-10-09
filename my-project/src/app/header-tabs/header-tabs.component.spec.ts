@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CodemirrorTextboxComponent } from './codemirror-textbox.component';
+import { HeaderTabsComponent } from './header-tabs.component';
 
-describe('CodemirrorTextboxComponent', () => {
-  let component: CodemirrorTextboxComponent;
-  let fixture: ComponentFixture<CodemirrorTextboxComponent>;
+describe('HeaderTabsComponent', () => {
+  let component: HeaderTabsComponent;
+  let fixture: ComponentFixture<HeaderTabsComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CodemirrorTextboxComponent ]
+      declarations: [ HeaderTabsComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CodemirrorTextboxComponent);
+    fixture = TestBed.createComponent(HeaderTabsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
