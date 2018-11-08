@@ -25,5 +25,5 @@ elif [ "$compiler" = "rust" ]; then
   rustc $file -o cRust
 
 else
-  "That compiler does not exist or is not available"
+  echo "That compiler does not exist or is not available" > errFile.txt
 fi
