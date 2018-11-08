@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 echo "This may take a while to build, as it requires some large packages get installed."
-echo "This will install to the current directory and will add directories to your PATH."
-echo "Continue?"
+echo "This will add directories to your PATH. Continue?"
 read  -n 1 -p ">" yn
 echo
 
@@ -19,7 +18,9 @@ if [[ "$yn" = "y" ]]; then
   rustup target add wasm32-unknown-unknown
   cargo install -f cargo-web
   cargo install --git https://github.com/alexcrichton/wasm-gc
-  cargo build rust-build
+  cd rust-build
+  cargo build --release
+  cd ..
   pip3 install --user flask
   pip3 install --user json
 
