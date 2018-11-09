@@ -8,21 +8,21 @@ app=Flask(__name__)
 @app.route('/')
 def index():
 
-    os.system("echo ''>errFile.txt")
-    try:
-        os.system('rm view.txt')
-    except:
-        pass
+    #os.system("echo ''>errFile.txt")
+    #try:
+        #os.system('rm view.txt')
+    #except:
+        #pass
         
     return render_template('index.html')
 
 @app.route('/compile', methods=['POST','GET'])
 def compile():
     os.system("echo ''>errFile.txt")
-    try:
-        os.system('rm view.txt')
-    except:
-        pass
+    #try:
+        #os.system('rm view.txt')
+    #except:
+        #pass
     
     if request.method == 'GET':
         txt = str(request.args.get('codeBox01'))
@@ -31,16 +31,16 @@ def compile():
         txt = str(request.form['codeBox01'])
         name = str(request.form['view'])
     #name != cwasm.js, cwasm.wasm, errFile.txt
-    if name == 'view.txt':
-        #Call AI
-        version = 'Unknown'
-        with open(name, 'w') as f:
-            f.write(txt)        
-            version = language.identify(f)
-            f.close() 
-        # if statement to create appropriately named file
-    elif name[-2:] == '.c':
-        version = 'c'
+    #if name == 'view.txt':
+        ##Call AI
+        #version = 'Unknown'
+        #with open(name, 'w') as f:
+            #f.write(txt)        
+            #version = language.identify(f)
+            #f.close() 
+        ## if statement to create appropriately named file
+    if name[-2:] == '.c':
+        #version = 'c'
     elif name[-4:] == '.cpp':
         version = 'cpp'
     elif name[-3:] == '.py':
