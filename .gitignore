@@ -1,0 +1,3 @@
+# the javascript is generated from the ts files, so they aren't needed
+*.js
+*.log
