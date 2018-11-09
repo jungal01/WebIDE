@@ -16,13 +16,13 @@ if [[ "$compiler" = "c" || "$compiler" = "cpp" ]]; then
 
 
 elif [ "$compiler" = "rust" ]; then
-# needs to be installed manually and add
-# .cargo/bin to $PATH. wasm-gc needs to
-# be installed through cargo:
-# cargo install --git https://github.com/alexcrichton/wasm-gc
-  rustc --target wasm32-unknown-unknown $file -o cwasm.wasm
-  wasm-gc cwasm.wasm cwasm.wasm
-  rustc $file -o cRust
+  # needs to be installed manually and add
+  # .cargo/bin to $PATH. wasm-gc needs to
+  # be installed through cargo:
+  # cargo install --git https://github.com/alexcrichton/wasm-gc
+  rustc --target wasm32-unknown-unknown $file -o cwasm.wasm 2> errFile.txt
+  #wasm-gc cwasm.wasm cwasm.wasm
+  rustc $file -o cRust 2>> errFile.txt
 
 else
   echo "That compiler does not exist or is not available" > errFile.txt
