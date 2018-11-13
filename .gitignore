@@ -8,3 +8,6 @@ errFile.txt
 
 # test files are useless unless they directly test our application
 *test*.*
+
+# The target directory has no useful info for someone else, so it isn't needed
+*/target/
