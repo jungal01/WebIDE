@@ -1,66 +1,29 @@
 #!/usr/bin/env bash
 
-# this script centralizes the ability of the server
-# to call compilers in the docker container.
-# It accepts 2 inputs, the compiler and the filename,
-# and allows for standard compiler calls, but doesn't 
-# allow for special compiler options.
- 
 compiler=$1
 file=$2
-object=${file%.*}
 
-if [[ "$compiler" = "python" ]]; then
-    python3 $file > py-output.txt
-    
-elif [[ "$compiler" = "go" ]]; then
-    gccgo $file -o cgo
-    ./cgo > go-output.txt
-    
-elif [[ "$compiler" = "fortran" ]]; then
-    gfortran -std=f2008 $file -o cfortran
-    ./cfortran > fortran-output.txt
+if [[ "$compiler" = "c" || "$compiler" = "cpp" ]]; then
+  emcc $file -s WASM=1 -o cwasm.js 2> errFile.txt
+  #rm cwasm.html
 
-elif [[ "$compiler" = "rust" ]]; then
-    # needs to be installed manually and add 
-    # .cargo/bin to PATH 
-    rustc $file -o crust
-    ./crust > rust-output.txt
+  if [ "$compiler" = "c" ]; then
+    gcc -std=c11 $file -o cClang
 
-elif [[ "$compiler" = "java" ]]; then
-    javac $file 
-    temp=${object^} 
-    java $temp > java-output.txt
+  else
+    g++ -std=c++14 $file -o cCpp
+  fi
 
-elif [[ "$compiler" = "objc" ]]; then
-    #this requires the packages gnustep and 
-    # gnustep-devel to be installed, and
-    #`. /usr/share/GNUstep/Makefiles/GNUstep.sh`
-    # to be added to .bashrc
-    gcc `gnustep-config --objc-flags` -lgnustep-base $file -o cobjc
-    ./cobjc > objc-output.txt
 
-elif [[ "$compiler" = "ada" ]]; then
-    gnat make $file
-    ./"$object" > ada-output.txt
-
-elif [[ "$compiler" = "cpp" ]]; then
-    g++ -std=c++14 $file -o ccpp
-    ./ccpp > cpp-output.txt
-
-elif [[ "$compiler" = "c" ]]; then
-    gcc -std=c18 $file -o cclang
-    ./cclang > c-output.txt
-    
-elif [[ "$compiler" = "ruby" ]]; then
-    ruby $file > ruby-output.txt
-
-elif [[ "$compiler" = "js" ]]; then
-    js $file > js-output.txt
-
-elif [[ "$compiler" = "lua" ]]; then
-    lua5.3 $file > lua-output.txt
+elif [ "$compiler" = "rust" ]; then
+  # needs to be installed manually and add
+  # .cargo/bin to $PATH. wasm-gc needs to
+  # be installed through cargo:
+  # cargo install --git https://github.com/alexcrichton/wasm-gc
+  rustc --target wasm32-unknown-unknown $file -o cwasm.wasm 2> errFile.txt
+  #wasm-gc cwasm.wasm cwasm.wasm
+  rustc $file -o cRust 2>> errFile.txt
 
 else
-    echo "That compiler does not exist or is not available"
+  echo "That compiler does not exist or is not available" > errFile.txt
 fi
