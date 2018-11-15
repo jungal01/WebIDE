@@ -89,7 +89,19 @@ def compileScript():
     with open(name,'w') as f:
         f.write(txt)
         f.close()
-    os.system(' bash call-compiler {} {}'.format(version,name))
+    print("Calling Compiler...")
+    os.system('bash call-compiler {} {}'.format(version,name))
+    print("...Finished Compiling")
+    errorFile = open('errFile.txt','r')
+    error = errorFile.read()
+    errorFile.close()
+    if error != '':
+        return error
+    elif langError != None:
+        return langError
+    else:
+        pass
+        
     #rv = ''
     #with open('errFile.txt', 'r') as f:
         #a = f.read()

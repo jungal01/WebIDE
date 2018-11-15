@@ -10,7 +10,7 @@ def index():
 
     os.system("echo ''>errFile.txt")
     try:
-        os.system('rm view.txt')
+        os.system('del view.*')
     except:
         pass
         
@@ -18,9 +18,10 @@ def index():
 
 @app.route('/compile', methods=['POST','GET'])
 def compile():
+    langError = None
     os.system("echo ''>errFile.txt")
     try:
-        os.system('rm view.txt')
+        os.system('del view.*')
     except:
         pass
     
@@ -35,10 +36,21 @@ def compile():
         #Call AI
         version = 'Unknown'
         with open(name, 'w') as f:
-            f.write(txt)
-            version = language.identify(f)
-            f.close() 
+            f.write(txt)        
+            f.close()
+        version = str(language.identify(name))
         # if statement to create appropriately named file
+        if version == 'java':
+            name = 'view.java'
+        elif version == 'c':
+            name = 'view.c'
+        elif version == 'cpp':
+            name = 'view.cpp'
+        elif version == 'rust':
+            name = 'view.rs'
+        else:
+            langError = "Language not supported"
+            
     elif name[-2:] == '.c':
         version = 'c'
     elif name[-4:] == '.cpp':
@@ -48,20 +60,22 @@ def compile():
     elif name[-3:] == '.rs':
         version = 'rust'
     else:
-        pass
+        langError = "Language not supported"
     #will put this in a while loop if we have multiple names over all from the AI
     with open(name,'w') as f:
         f.write(txt)
         f.close()
-    os.system('./call-compiler {} {}'.format(version,name))
-    rv = ''
-    with open('errFile.txt', 'r') as f:
-        a = f.read()
-        rv = a
-        f.close()
+    os.system('bash call-compiler {} {}'.format(version,name))
+    errorFile = open('errFile.txt','r')
+    error = errorFile.read()
+    errorFile.close()
+    if error != '':
+        return redirect(url_for("index",output=error))
+    elif langError != None:
+        return redirect(url_for("index",output=langError))
+    else:
+        pass
         
-    if rv != '':
-        return redirect(url_for("index",output=rv))
     #auto populates if there is no error
         
 if __name__== '__main__':
