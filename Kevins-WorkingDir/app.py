@@ -10,18 +10,24 @@ def index():
 
     os.system("echo ''>errFile.txt")
     try:
-        os.system('del view.*')
+        os.system('del view.txt')
     except:
         pass
         
     return render_template('index.html')
 
+@app.route('/about')
+def aboutPage():
+    return render_template('index_about')
+
 @app.route('/compile', methods=['POST','GET'])
 def compile():
+    print('Getting request')
+    print('request')
     langError = None
     os.system("echo ''>errFile.txt")
     try:
-        os.system('del view.*')
+        os.system('del view.txt')
     except:
         pass
     
@@ -70,13 +76,13 @@ def compile():
     error = errorFile.read()
     errorFile.close()
     if error != '':
-        return redirect(url_for("index",output=error))
+        return render_template(url_for("index",output=error))
     elif langError != None:
-        return redirect(url_for("index",output=langError))
+        return render_template(url_for("index",output=langError))
     else:
         pass
         
     #auto populates if there is no error
         
 if __name__== '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)        
+    app.run(debug=True, host='0.0.0.0', port=5004)        

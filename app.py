@@ -20,6 +20,7 @@ def index():
 def compile():
     langError = None
     os.system("echo ''>errFile.txt")
+    name = 'view.txt'
     try:
         os.system('del view.*')
     except:
@@ -27,10 +28,10 @@ def compile():
     
     if request.method == 'GET':
         txt = str(request.args.get('codeBox01'))
-        name = str(request.args.get('view'))
+        #name = str(request.args.get('view'))
     else:
         txt = str(request.form['codeBox01'])
-        name = str(request.form['view'])
+        #name = str(request.form['view'])
     #name != cwasm.js, cwasm.wasm, errFile.txt
     if name == 'view.txt':
         #Call AI
