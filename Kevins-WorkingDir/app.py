@@ -35,7 +35,7 @@ def compile():
         #Call AI
         version = 'Unknown'
         with open(name, 'w') as f:
-            f.write(txt)        
+            f.write(txt)
             version = language.identify(f)
             f.close() 
         # if statement to create appropriately named file
