@@ -1,6 +1,9 @@
-# the javascript is from ts and wasm compilation, so they aren't needed
+# the javascript is from ts and wasm compilation, so they aren't needed. Also
+# excluding all compiled examples
 *.js
 *.wasm
+cRust
+cC*
 
 # our log files aren't important to others
 *.log
