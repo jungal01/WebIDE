@@ -19,7 +19,7 @@ def index():
 
 @app.route('/about')
 def aboutPage():
-    return render_template('index_about')
+    return render_template('index_about.html')
 
 
 @app.route('/compile', methods=['POST'])
@@ -38,24 +38,27 @@ def compile():
         f.write(txt)
         f.close()
 
-    with open(view) as f:
-        lang = f.readline()
-        version = str(language.identify(name))
-        # if statement to create appropriately named file
-        name = ""
-        if lang == '//java':
-            name = 'view.java'
-        elif lang == '//c':
-            name = 'view.c'
-        elif lang == '//cpp':
-            name = 'view.cpp'
-        elif lang == '//rust':
-            name = 'view.rs'
-        else:
-            langError = "Language not supported"
+    f = open(view)
+    lang = f.readline()
+    version = str(language.identify(name))
+    # if statement to create appropriately named file
+    name = ""
+    if lang == '//java':
+        name = 'view.java'
+    elif lang == '//c':
+        name = 'view.c'
+    elif lang == '//cpp':
+        name = 'view.cpp'
+    elif lang == '//rust':
+        name = 'view.rs'
+    else:
+        langError = "Language not supported"
 
     if name != "":
-        os.system('cat {0} > {1}' .format(f, name))
+        temp = open(name, 'w')
+        temp.write(txt)
+        temp.close()
+    f.close()
 
     if name[-2:] == '.c':
         version = 'c'
