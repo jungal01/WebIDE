@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 echo "This may take a while to build, as it requires some large packages get installed."
 echo "This will add directories to your PATH. Continue?"
-read  -n 1 -p "(y)es or (n)o>" yn
+read  -n 1 -p "[y/n]>" yn
 echo
 
 if [[ "$yn" = "y" ]]; then
@@ -18,6 +18,7 @@ if [[ "$yn" = "y" ]]; then
   cd ..
   curl -sf -L https://static.rust-lang.org/rustup.sh | sh
   echo 'export PATH=.:~/.cargo/bin:$PATH' >> ~/.bashrc
+  source ~/.bashrc
   rustup target add wasm32-unknown-unknown
   cargo install -f cargo-web
   cargo install --git https://github.com/alexcrichton/wasm-gc
