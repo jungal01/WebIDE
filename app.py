@@ -5,34 +5,34 @@ import identify_language as language
 
 app=Flask(__name__)
 
+
 @app.route('/')
 def index():
-
-    os.system("echo ''>errFile.txt")
-    try:
-        os.system('del view.*')
-    except:
-        pass
-        
     return render_template('index.html')
 
-@app.route('/compile', methods=['POST','GET'])
+@app.route('/about')
+def aboutPage():
+    return render_template('index_about.html')
+
+@app.route('/compile', methods=['POST'])
 def compile():
+    print('Getting request')
     langError = None
     os.system("echo ''>errFile.txt")
-    name = 'view.txt'
     try:
-        os.system('del view.*')
+        os.system('rm view.txt')
     except:
         pass
-    
-    if request.method == 'GET':
-        txt = str(request.args.get('codeBox01'))
-        #name = str(request.args.get('view'))
-    else:
-        txt = str(request.form['codeBox01'])
+    #name = 'view.txt'
+    #if request.method == 'GET':
+        #txt = str(request.args.get('codeBox01'))
+        #print(txt)
+    name = str(request.args.get('codeName'))
+    #else:
+        #txt = str(request.form['codeBox01'])
         #name = str(request.form['view'])
     #name != cwasm.js, cwasm.wasm, errFile.txt
+    txt = request.form['codeBox01']
     if name == 'view.txt':
         #Call AI
         version = 'Unknown'
@@ -64,6 +64,9 @@ def compile():
         langError = "Language not supported"
     #will put this in a while loop if we have multiple names over all from the AI
     with open(name,'w') as f:
+        #rv = ''
+        #for line in txt:
+            #rv+= line+'\n'
         f.write(txt)
         f.close()
     os.system('bash call-compiler {} {}'.format(version,name))
@@ -71,13 +74,13 @@ def compile():
     error = errorFile.read()
     errorFile.close()
     if error != '':
-        return redirect(url_for("index",output=error))
+        return render_template("index.html",output='Your code is: '+version+'\n' + error, entered=txt)
     elif langError != None:
-        return redirect(url_for("index",output=langError))
+        return render_template("index.html",output='Your code is: '+version+'\n' + langError, entered=txt)
     else:
         pass
         
     #auto populates if there is no error
         
 if __name__== '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)        
+    app.run(debug=True, host='0.0.0.0', port=5000)    
