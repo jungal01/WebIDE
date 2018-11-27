@@ -1,0 +1,10 @@
+# the javascript is from ts and wasm compilation, so they aren't needed
+*.js
+*.wasm
+
+# our log files aren't important to others
+*.log
+errFile.txt
+
+# test files are useless unless they directly test our application
+*test*.*

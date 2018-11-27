@@ -1,7 +1,7 @@
-import testt #import main_test
+from ai.testt import main_test
 
 def identify(file):
-    return testt.main_test(file)
+    return main_test(file)
 
 def main():
     version = identify('hello.c')
