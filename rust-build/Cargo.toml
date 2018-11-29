@@ -1,7 +1,0 @@
-[package]
-name = "rust-build"
-version = "0.1.0"
-authors = ["Allen <jungal01@luther.edu>"]
-
-[dependencies]
-wasm-bindgen = "0.2.27"
