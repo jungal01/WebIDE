@@ -20,7 +20,7 @@ def compile():
     langError = None
     os.system("echo ''>errFile.txt")
     try:
-        os.system('del view.txt') #del for windows, rm for linux
+        os.system('rm view.txt') #del for windows, rm for linux
     except:
         pass
     #name = 'view.txt' # used in testing
@@ -59,7 +59,7 @@ def compile():
         else:
             langError = "Language not supported"
         print('Got Version')
-        #will put this in a while loop if we have multiple names over all from the AI
+        #will put this in a while loop if we have multiple names over all from the AI Currently its just for one file
         print("opening and writing to the file to create")
         with open(name,'w') as f:
             f.write(txt)
@@ -75,9 +75,9 @@ def compile():
         errorFile.close()
         
         if error != '':
-            return render_template("index.html",output='Your code is: '+version+'\n' + error, inputbox=txt)
+            return render_template("index.html",output='Your code is: '+version+'\n' + error, inputbox=txt,filename=name)
         elif langError != None:
-            return render_template("index.html",output='Your code is: '+version+'\n' + langError, inputbox=txt)
+            return render_template("index.html",output='Your code is: '+version+'\n' + langError, inputbox=txt,filename=name)
         else:
             pass
             #return render_template("index.html",inputbox=txt, filename=name)
