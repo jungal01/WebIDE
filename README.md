@@ -20,14 +20,14 @@ This is version 1.1.0 of WebIDE, Designed by Allen Junge, Kevin Cobble, Eros Cas
 
 
 ## Schedule for 2019 Spring
-syntax highlighting - AJ & KC & EC - start by 2-28
-config file - select compile options - AJ & EC - start by 2-25
-downloading/uploading files and folders - KC & EC - Complete 3-1
-setup apache server - contact adam/helpdesk
-redirection warnings - AJ & EC & KC- complete by  2-25
-tabs - KC & EC - Complete by 2-25
-multiplatform compilation
+  * syntax highlighting - AJ & KC & EC - start by 2-28
+  * config file - select compile options - AJ & EC - start by 2-25
+  * downloading/uploading files and folders - KC & EC - Complete 3-1
+  * setup apache server - contact adam/helpdesk
+  * redirection warnings - AJ & EC & KC- complete by  2-25
+  * tabs - KC & EC - Complete by 2-25
+  * multiplatform compilation
 [current]
-ui
-ai - JH
-code migration - KC - Complete by 2-17
+  * ui
+  * ai - JH
+  * code migration - KC - Complete by 2-17
