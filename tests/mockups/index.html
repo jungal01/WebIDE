@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>WebIDE</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  </head>
+
+  <style>
+    html {
+      background-color: #757575;
+    }
+
+    body {
+      font-family: "Arial", sans-serif;
+      padding: 15px;
+      background-color: #757575;
+    }
+
+    textarea {
+      /*padding-left: 40px;*/
+      width: 100%;
+      background-color: black;
+      color: white;
+      font-family: monospace;
+      font-size: 16px;
+      border: solid 2px #909090;
+    }
+
+    aside {
+      padding-left: 4px;
+      width: 100%;
+    }
+
+    span {
+      padding-left: 40px;
+    }
+
+    .settings {
+      grid-area: s;
+      text-align: center;
+      border: 4px;
+    }
+
+    .folders {
+      grid-area: f;
+      color: white;
+      background-color: black;
+      font-size: 14px;
+    }
+
+    .folders p:hover{
+      background-color: #909090;
+    }
+
+    .code {
+      grid-area: c;
+    }
+
+    .output {
+      grid-area: o;
+      text-align: left;
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-areas:
+      's s s s s s'
+      'f f c c c c'
+      'f f c c c c'
+      'f f c c c c'
+      'o o o o o o'
+      'o o o o o o';
+      grid-gap: 4px;
+    }
+
+    .right {
+      margin: auto;
+      position: relative;
+      float: right;
+    }
+
+    #submit {
+      background-color: #008cba;
+      font-size: 16px;
+      color: white;
+      padding: 14px 30px;
+      border: none;
+    }
+
+    #submit:hover {
+      background-color: white;
+      color: black;
+    }
+
+    #output {
+    /*height: 20vh;*/
+    }
+
+    /* side menu bar require DO NOT ERASE*/
+
+
+    /* The side navigation menu */
+
+    .sidenav {
+      height: 100%;
+      width: 0;
+      position: absolute;
+      z-index: 1;
+      top: 0;
+      right: 0px;
+      background-color: #111;
+      overflow-x: hidden;
+      transition: 0.5s;
+      padding-top: 60px;
+    }
+
+    .sidenav a {
+      padding: 8px 8px 8px 32px;
+      text-decoration: none;
+      font-size: 25px;
+      color: #818181;
+      display: block;
+      transition: 0.3s;
+    }
+
+    a:hover {
+      color: white;
+    }
+
+    .sidenav .closebtn {
+      position: absolute;
+      top: 0;
+      right: 25px;
+      font-size: 36px;
+      margin-left: 50px;
+    }
+
+    @media screen and (max-height: 450px) {
+      .sidenav {padding-top: 15px;}
+      .sidenav a {font-size: 18px;}
+    }
+  </style>
+
+  <body>
+    <div id="sidenav" class="sidenav">
+      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+      <a href="#">Home</a>
+      <a href="/about">About</a>
+      <a href="#">Downloads</a>
+      <a href="#">Run</a>
+    </div>
+    <span style="font-size:30px;cursor:pointer" class='right' onclick="openNav()">&#9776; open</span>
+
+    <!--&#x1F4C1 closed dir-->
+    <!--&#x1F4C2 open dir-->
+    <!--&#x1F4C4 file-->
+    <!--&#x-->
+    <div class="grid-container">
+      <div class="settings">
+        <button id='submit' type='submit' onclick='clickedOn(false)'> Run &#x00bb;</button>
+      </div>
+
+      <div class="folders">
+        <aside>
+          <p>&#x2304; &#x1F4C2; stuff</p>
+          <p>&emsp; &emsp; &#x1F4C4; foo</p>
+          <p>&emsp; &emsp; &#x1F4C4; bar</p>
+          <p>&emsp; &emsp; &#x1F4C4; baz</p>
+          <p>&#707; &#x1F4C1; things</p>
+        </aside>
+      </div>
+
+      <div class="input">
+        <form action="/compile" method='post'>
+        <input type='text' name='codeboxname' id='codeboxname' size='35' placeholder='File Name'>
+        <br>
+        <textarea name="codeBox01" rows="20" cols="77" placeholder="Type code here" id="codeIn" spellcheck="false">hello</textarea>
+        </form>
+      </div>
+
+      <div class="output">
+        <textarea id=output rows="8" cols="70" readonly></textarea>
+      </div>
+    </div>
+
+    <script>
+    $(function() {
+    // Target all classed with ".lined"
+    $("#codeIn").linedtextarea();
+    });
+    </script>
+
+    <script>
+    function clickedOn(booleanVal) {
+    console.log("clicked on")
+
+    if (booleanVal == false) {
+    setTimeout(clickedOn(true),20000)
+    }
+    window.location.reload()
+    }
+    </script>
+
+    <script>
+    function openNav() {
+    document.getElementById("sidenav").style.width = "250px";
+    }
+    function closeNav() {
+    document.getElementById("sidenav").style.width = "0";
+    }
+    </script>
+
+  </body>
+</html>
+
+<!-- https://codemirror.net/ -->
+<!-- https://stackoverflow.com/questions/1995370/html-adding-line-numbers-to-textarea -->
