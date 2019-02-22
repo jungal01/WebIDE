@@ -24,7 +24,7 @@ def compile():
     except:
         pass
     #name = 'view.txt' # used in testing
-    name = request.form['codeboxname'] #used in  
+    name = request.form['codeboxname'] #used in
     print(name)
     txt = request.form['codeBox01']
     try:
@@ -33,7 +33,7 @@ def compile():
             ##Call AI
             #version = 'Unknown'
             #with open(name, 'w') as f:
-                #f.write(txt)        
+                #f.write(txt)
                 #f.close()
             #version = str(language.identify(name))
             ## if statement to create appropriately named file
@@ -47,7 +47,7 @@ def compile():
                 #name = 'view.rs'
             #else:
                 #langError = "Language not supported"
-        print('Checking version') 
+        print('Checking version')
         # Checks what version it is by the name that was entered
         if name[-2:] == '.c':
             version = 'c'
@@ -65,16 +65,16 @@ def compile():
         with open(name,'w') as f:
             f.write(txt)
             f.close()
-            
+
         print("calling compiler")
         os.system('./call-compiler {} {}'.format(version,name)) #bash is used for windows ./ is for linux
         print("Finished compiling")
-    
+
         errorFile = open('errFile.txt','r')
-        
+
         error = errorFile.read()
         errorFile.close()
-        
+
         if error != '': # returns error cases to output if error occured
             return render_template("index.html",output='Your code is: '+version+'\n' + error, inputbox=txt,filename=name)
         elif langError != None:
@@ -86,6 +86,6 @@ def compile():
         print(e)
         return render_template("index.html",inputbox=txt,filename=name,output=e)
     #auto populates if there is no error
-        
+
 if __name__== '__main__':
-    app.run(debug=True, host='127.0.0.1', port=5000)    
+    app.run(debug=True, host='127.0.0.1', port=5000)
