@@ -12,6 +12,28 @@ if [[ "$yn" = "y" ]]; then
   sudo apt upgrade -y
   sudo apt-get install cuda
 
+  # language installation
+  #gcc options
+  sudo apt install gnat # ada
+  sudo apt install gfortran # fortran
+  sudo apt install gccgo # go
+  sudo apt install gnustep-devel # obj c
+  echo ". /usr/share/GNUstep/Makefiles/GNUstep.sh" >> ~/.bashrc
+
+  # OpenJDK Java
+  sudo add-apt-repository ppa:openjdk-r/ppa
+  sudo apt update && sudo apt upgrade
+  sudo apt install openjdk-11-jdk
+  # end Java
+  # Lua
+  curl -R -O http://www.lua.org/ftp/lua-5.3.5.tar.gz
+  tar zxf lua-5.3.5.tar.gz
+  cd lua-5.3.5
+  make install
+  #end Lua
+
+
+  # platform options
   # install and source WebAssembly for compilation
   git clone https://github.com/juj/emsdk.git
   cd emsdk

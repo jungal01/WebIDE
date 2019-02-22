@@ -1,0 +1,134 @@
+html {
+  background-color: #757575;
+}
+
+body {
+  font-family: "Arial", sans-serif;
+  padding: 15px;
+  background-color: #757575;
+}
+
+textarea {
+  /*padding-left: 40px;*/
+  width: 100%;
+  background-color: black;
+  color: white;
+  font-family: monospace;
+  font-size: 16px;
+  border: solid 2px #909090;
+}
+
+aside {
+  padding-left: 6px;
+}
+
+span {
+  padding-left: 40px;
+}
+
+.settings {
+  grid-area: s;
+  text-align: center;
+  border: 4px;
+}
+
+.folders {
+  grid-area: f;
+  color: white;
+  background-color: black;
+  font-size: 14px;
+  height: 99%;
+}
+
+.folders p:hover{
+  background-color: #909090;
+}
+
+.code {
+  grid-area: c;
+}
+
+.output {
+  grid-area: o;
+  text-align: left;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-areas:
+  'f f c c c c'
+  'f f c c c c'
+  'f f c c c c'
+  's s o o n n'
+  's s o o n n';
+  grid-column-gap: 2px;
+  grid-row-gap: 0px;
+}
+
+.right {
+  margin: auto;
+  position: relative;
+  float: right;
+}
+
+#codeIn {
+}
+
+#submit {
+  background-color: #008cba;
+  font-size: 16px;
+  color: white;
+  padding: 14px 30px;
+  border: none;
+}
+
+#submit:hover {
+  background-color: white;
+  color: black;
+}
+
+
+
+/* side menu bar require DO NOT ERASE*/
+
+
+/* The side navigation menu */
+
+.sidenav {
+  height: 100%;
+  width: 0;
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  right: 0px;
+  background-color: #111;
+  overflow-x: hidden;
+  transition: 0.5s;
+  padding-top: 60px;
+}
+
+.sidenav a {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: block;
+  transition: 0.3s;
+}
+
+a:hover {
+  color: white;
+}
+
+.sidenav .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
+}
+
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
