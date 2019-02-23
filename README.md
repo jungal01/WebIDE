@@ -24,7 +24,7 @@ This is version 1.1.0 of WebIDE, Designed by Allen Junge, Kevin Cobble, Eros Cas
   * config file - select compile options - AJ & EC - start by 2-25
   * downloading/uploading files and folders - KC & EC - Complete 3-1
   * setup apache server - contact adam/helpdesk
-  * redirection warnings - AJ & EC & KC- complete by  2-25
+  * redirection warnings - AJ & EC & KC- completed on 2-23-2019
   * tabs - KC & EC - Complete by 2-25
   * multiplatform compilation
 [current]
