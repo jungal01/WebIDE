@@ -1,0 +1,7 @@
+WebIDE began as the brainchild of Allen, halfway into his sophomore year at Luther College.
+The idea began as a compiler that can manage multiple languages in one window, with no
+further functionality. When the time for his senior class to come up with a project,
+the entire group accepted the task and changed the idea to show the output. further on,
+the group decided to make it an experience that was as similar to a native IDE as
+possible, leading us to today, in which our innovative techniques have the potential
+to change how online IDEs function for the better.
