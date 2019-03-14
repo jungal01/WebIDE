@@ -1,6 +1,0 @@
-Flask
-node.js
-typescript
-angular
-@angular/cli
-npm
