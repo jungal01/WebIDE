@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+# this script is run to generate the docker system and run the actual server
+
+docker build --no-cache -t server .
+
+docker run server

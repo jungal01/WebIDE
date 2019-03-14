@@ -5,12 +5,16 @@ read  -n 1 -p "[y/n]>" yn
 echo
 
 if [[ "$yn" = "y" ]]; then
+<<<<<<< HEAD
   # install the CUDA version for ubuntu for the AI
+=======
+>>>>>>> 9ff7d58be84e2c1d1a6d43f34b0e08c85890e821
   sudo dpkg -i cuda-repo-ubuntu1804-10-0-local-10.0.130-410.48_1.0-1_amd64.deb
   sudo apt-key add /var/cuda-repo-<version>/7fa2af80.pub
   sudo apt update
   sudo apt upgrade -y
   sudo apt-get install cuda
+<<<<<<< HEAD
 
   # language installation
   #gcc options
@@ -35,6 +39,8 @@ if [[ "$yn" = "y" ]]; then
 
   # platform options
   # install and source WebAssembly for compilation
+=======
+>>>>>>> 9ff7d58be84e2c1d1a6d43f34b0e08c85890e821
   git clone https://github.com/juj/emsdk.git
   cd emsdk
   ./emsdk install latest
