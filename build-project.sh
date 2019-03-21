@@ -49,12 +49,7 @@ if [[ "$yni" = "y" ]]; then
   echo 'export PATH=.:~/.cargo/bin:$PATH' >> ~/.bashrc
   source ~/.bashrc
   # end Rust
-  # Lua
-  curl -R -O http://www.lua.org/ftp/lua-5.3.5.tar.gz
-  tar zxf lua-5.3.5.tar.gz
-  cd lua-5.3.5
-  make install
-  # end Lua
+  sudo apt install lua5.3 -y # Lua
   sudo apt install ruby-full -y # ruby
   # python latest stable version
   sudo add-apt-repository ppa:deadsnakes/ppa -y
