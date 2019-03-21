@@ -34,11 +34,9 @@ if [[ "$yni" = "y" ]]; then
   echo
   # language installations
   # gcc options
-  sudo apt install gnat -y # ada
-  sudo apt install gfortran -y # fortran
+  sudo apt install gnat-4.9 -y # ada
+  sudo apt install gfortran-8 -y # fortran
   sudo apt install gccgo -y # go
-  sudo apt install gnustep-devel -y # obj c
-  echo '. /usr/share/GNUstep/Makefiles/GNUstep.sh' >> ~/.bashrc
 
   #other languages
   # OpenJDK Java
@@ -73,14 +71,16 @@ if [[ "$yni" = "y" ]]; then
   sudo apt install build-essential xz-utils curl
   curl -SL http://releases.llvm.org/7.0.1/clang+llvm-7.0.1-x86_64-linux-gnu-ubuntu-18.04.tar.xz | tar -xJC .
   mv clang+llvm-7.0.1-x86_64-linux-gnu-ubuntu-18.04 clang_7.0.1
-  sudo mv clang_7.0.1 /usr/local
+  sudo mv clang_7.0.1 /usr/local/
   echo 'export PATH=/usr/local/clang_7.0.1/bin:$PATH' >> ~/.bashrc
   echo 'export LD_LIBRARY_PATH=/usr/local/clang_7.0.1/lib:$LD_LIBRARY_PATH' >> ~/.bashrc
   # end clang
   # Pypy
   sudo add-apt-repository ppa:pypy/ppa -y
+  sudo apt install pypy -y
   sudo apt install pypy3 -y
   # end pypy
+  sudo apt install tcc #tcc
 
 
   echo
@@ -107,19 +107,20 @@ if [[ "$yni" = "y" ]]; then
   source webide/bin/activate
   pip install -r requirements.txt
 
+  echo
   echo "Our job here is done. Go forth and fix bugs!"
 
 
 elif [[ "$yni" = "i" ]]; then
   echo
   echo "this adds the following lines to bashrc:"
-  echo 'export PATH=.:~/.cargo/bin:$PATH; . /usr/share/GNUstep/Makefiles/GNUstep.sh; export PATH=/usr/local/clang_7.0.1/bin:$PATH; export LD_LIBRARY_PATH=/usr/local/clang_7.0.1/lib:$LD_LIBRARY_PATH'
+  echo 'export PATH=.:~/.cargo/bin:$PATH; export PATH=/usr/local/clang_7.0.1/bin:$PATH; export LD_LIBRARY_PATH=/usr/local/clang_7.0.1/lib:$LD_LIBRARY_PATH'
   echo
   echo "This adds the following ppa's:"
   echo 'ubuntu-toolchain-r/test; openjdk-r/ppa; deadsnakes/ppa; pypy/ppa'
   echo
   echo "This installs the following packages:"
-  echo 'cuda-repo-ubuntu1804-10-0-local-10.0.130-410.48_1.0-1_amd64.deb; cuda; gcc-8; g++-8; gnat; gfortran; gccgo; gnustep-devel; openjdk-11-jdk; python3.7; python3.6; ruby-full, pypy3'
+  echo 'cuda-repo-ubuntu1804-10-0-local-10.0.130-410.48_1.0-1_amd64.deb; cuda; gcc-8; g++-8; gnat; gfortran; gccgo; openjdk-11-jdk; python3.7; python3.6; ruby-full, pypy3, tcc'
   echo
   echo "this downloads and installs the following from the web:"
   echo 'http://www.lua.org/ftp/lua-5.3.5.tar.gz; https://static.rust-lang.org/rustup.sh; http://releases.llvm.org/7.0.1/clang+llvm-7.0.1-x86_64-linux-gnu-ubuntu-18.04.tar.xz'
