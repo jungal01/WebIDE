@@ -1,3 +1,6 @@
+before_install:
+  ./build-project.sh
+
 language: python
 
 python:
