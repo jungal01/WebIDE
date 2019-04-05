@@ -4,7 +4,23 @@ title = "WebIDE Configuration options"
   linux = true
   wasm = true
   windows = true
-  arm = true
+  all = true
+
+  [[all.languages]]
+    python = [2.7, 3.5, 3.6, 3.7]
+    lua = 5.3
+    ruby = 2.3
+    java = 11
+    javascript = 4.3
+
+      [[all.languages.compilers]]
+        python = ["pypy", "cpython"]
+        lua = "lua"
+        ruby = "ruby"
+        java = "javac"
+        javascript = "js"
+
+
 
   [[linux.compilers]]
     gcc = 8.1
@@ -39,7 +55,7 @@ title = "WebIDE Configuration options"
       objcpp = "clang -objC++"
 
       [[linux.clang.languages.versions]]
-        c = ['c89', 'c90', 'iso9899:1990', 'iso9899:199409', 'gnu89', 'gnu90', 'c99', 'gnu99', 'c11', 'iso9899:199409', 'gnu11', 'c17', 'iso9899:2017', 'gnu17']
+        c = ['c89', 'c90', 'iso9899:1990', 'gnu89', 'gnu90', 'c99', 'gnu99', 'c11', 'iso9899:199409', 'gnu11', 'c17', 'iso9899:2017', 'gnu17']
         cpp = ['c++98', 'c++03', 'gnu++98', 'gnu++03', 'c++11', 'gnu++11', 'c++14', 'gnu++14', 'c++17', 'gnu++17']
 
 
@@ -87,7 +103,7 @@ title = "WebIDE Configuration options"
       objcpp = "clang -objC++"
 
       [[windows.clang.languages.versions]]
-        c = ['c89', 'c90', 'iso9899:1990', 'iso9899:199409', 'gnu89', 'gnu90', 'c99', 'gnu99', 'c11', 'iso9899:199409', 'gnu11', 'c17', 'iso9899:2017', 'gnu17']
+        c = ['c89', 'c90', 'iso9899:1990', 'gnu89', 'gnu90', 'c99', 'gnu99', 'c11', 'iso9899:199409', 'gnu11', 'c17', 'iso9899:2017', 'gnu17']
         cpp = ['c++98', 'c++03', 'gnu++98', 'gnu++03', 'c++11', 'gnu++11', 'c++14', 'gnu++14', 'c++17', 'gnu++17']
 
   [[arm.compilers]]
