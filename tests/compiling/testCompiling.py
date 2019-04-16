@@ -140,7 +140,7 @@ class TestCompiling(unittest.TestCase):
         for file in output:
             if ('cc' in file) or ('cr' in file):
                 wasm_bin += 1
-        subprocess.run("rm *exe output.txt", shell=True)
+        subprocess.run("rm *wasm output.txt", shell=True)
         self.assertTrue(wasm_bin == 5)
 
 
