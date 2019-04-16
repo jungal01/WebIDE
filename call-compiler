@@ -112,6 +112,19 @@ if [[ "$language" = 'python' ]]; then
   fi
 
 
+elif [[ "$language" = "bash" ]]; then
+  if [[ "$platform" != "windows" ]]; then
+    if [[ "$compiler" = "default" ]] || [[ "$compiler" = "4.3" ]]; then
+      bash "$file" &> output.txt
+    else
+      echo "that Bash interpreter is not available."
+      echo "the available Bash interpreter is 4.3 (default)"
+    fi
+  else
+    echo "Bash cannot run on Windows." > output.txt
+  fi
+
+
 elif [[ "$language" = "java" ]]; then
   if [[ "$compiler" = "default" ]] || [[ "$compiler" = "javac" ]]; then
       javac "$file" 2> output.txt
@@ -156,8 +169,8 @@ elif [[ "$language" = "go" ]]; then
       gccgo "$file" -o cgo 2> output.txt
       ./cgo &>> output.txt
     else
-      echo "Go is not available on that platform."
-      echo "Go is available on linux (default)"
+      echo "Go is not available on that platform." > output.txt
+      echo "Go is available on linux (default)" >> output.txt
     fi
   else
     echo "that Go compiler is not available."
@@ -176,8 +189,8 @@ elif [[ "$language" = "fortran" ]]; then
         ./cfortran &>> output.txt
       fi
     else
-      echo "Fortran is not available for that platform."
-      echo "Fortran is available on linux (default)"
+      echo "Fortran is not available for that platform." > output.txt
+      echo "Fortran is available on linux (default)" >> output.txt
     fi
   else
     echo "that Fortran compiler is not available."
@@ -193,10 +206,10 @@ elif [[ "$language" = "rust" ]]; then
       ./crust &>> output.txt
 
     elif [[ "$platform" = "wasm" ]] || [[ "$platform" = "webassembly" ]]; then
-      rustc --target wasm32-unknown-unknown "$file" -o cwasm.wasm 2>output.txt
+      rustc --target wasm32-unknown-unknown "$file" -o crust.wasm 2> output.txt
     else
-      echo "Rust is not available on that platform."
-      echo "Rust is available for WebAssembly, linux (default)"
+      echo "Rust is not available on that platform." > output.txt
+      echo "Rust is available for WebAssembly, linux (default)" >> output.txt
     fi
   else
     echo "that Rust compiler is not available."
@@ -211,11 +224,10 @@ elif [[ "$language" = "objc" ]]; then
       ./cobjc &>> output.txt
 
     elif [[ "$platform" = "windows" ]]; then
-      clang -objc --target=x86_64-pc-windows-gnu "$file" -o cobjc 2> output.txt
-      ./cobjc &>> output.txt
+      clang -objc --target=x86_64-pc-windows-gnu "$file" -o cObjc.exe 2> output.txt
     else
-      echo "Objective-C is not available for that platform."
-      echo "Objective-C is available for Windows, linux (default)"
+      echo "Objective-C is not available for that platform." > output.txt
+      echo "Objective-C is available for Windows, linux (default)" >> output.txt
     fi
   else
     echo "that Objective-C compiler is not available."
@@ -226,15 +238,14 @@ elif [[ "$language" = "objc" ]]; then
 elif [[ "$language" = "objcpp" ]] || [[ "$language" = "objc++" ]]; then
   if [[ "$compiler" = "default" ]] || [[ "$compiler" = "clang" ]]; then
     if [[ "$platform" = "default" ]] || [[ "$platform" = "linux" ]]; then
-      clang -objc++ "$file" -o cObjc++ 2> output.txt
-      ./cobjc &>> output.txt
+      clang -objc++ "$file" -o cObjcpp 2> output.txt
+      ./cObjcpp &>> output.txt
 
     elif [[ "$platform" = "windows" ]]; then
-      clang -objc++ --target=x86_64-pc-windows-gnu "$file" -o cObjcpp 2> output.txt
-      ./cObjcpp &>> output.txt
+      clang -objc++ --target=x86_64-pc-windows-gnu "$file" -o cObjcpp.exe 2> output.txt
     else
-      echo "Objective-C++ is not available for that platform."
-      echo "Objective-C++ is available for Windows, linux (default)"
+      echo "Objective-C++ is not available for that platform." > output.txt
+      echo "Objective-C++ is available for Windows, linux (default)" >> output.txt
     fi
   else
     echo "that Objective-C++ compiler is not available."
@@ -247,14 +258,14 @@ elif [[ "$language" = "ada" ]]; then
     if [[ "$platform" = "default" ]] || [[ "$platform" = "linux" ]]; then
       if [[ "$version" = "default" ]]; then
         gnat make "$file" 2> output.txt
-        ./"$object" &>> output.txt
+        ./${file%.*} &>> output.txt
       elif [[ "$version" != "default" ]]; then
         gnat make -"$version" "$file" 2> output.txt
         ./${file%.*} &>> output.txt
       fi
     else
-      echo "Ada is not available for that platform."
-      echo "Ada is available for linux (default)"
+      echo "Ada is not available for that platform." > output.txt
+      echo "Ada is available for linux (default)" >> output.txt
     fi
   else
     echo "that Ada compiler is not available."
@@ -288,11 +299,9 @@ elif [[ "$language" = "cpp" ]]; then
   elif [[ "$platform" = "windows" ]]; then
     if [[ "$compiler" = "default" ]] || [[ "$compiler" = "clang" ]]; then
       if [[ "$version" = "default" ]]; then
-        clang++ --target=x86_64-pc-windows-gnu "$file" -o ccpp 2> output.txt
-        ./ccpp &>> output.txt
+        clang++ --target=x86_64-pc-windows-gnu "$file" -o ccpp.exe 2> output.txt
       elif [[ "$version" != "default" ]]; then
-        clang++ --target=x86_64-pc-windows-gnu -std="$version" "$file" -o ccpp 2> output.txt
-        ./ccpp &>> output.txt
+        clang++ --target=x86_64-pc-windows-gnu -std="$version" "$file" -o ccpp.exe 2> output.txt
       fi
     else
       echo "that C++ compiler is not available."
@@ -301,14 +310,14 @@ elif [[ "$language" = "cpp" ]]; then
 
   elif [[ "$platform" = "webassembly" ]] || [[ "$platform" = "wasm" ]]; then
     if [[ "$compiler" = "default" ]] || [[ "$compiler" = "emcc" ]]; then
-      emcc "$file" -s WASM=1 -o cwasm.js 2> output.txt
+      emcc "$file" -s WASM=1 -o ccpp.js 2> output.txt
     else
       echo "that C++ compiler is not available."
-      echo "the available C++ compiler is clang (default)"
+      echo "the available C++ compiler is emcc (default)"
     fi
   else
-    echo "C++ is not available for that platform."
-    echo "C++ is available for Windows, linux (default)"
+    echo "C++ is not available for that platform." > output.txt
+    echo "C++ is available for Windows, WebAssembly, linux (default)" >> output.txt
   fi
 
 
@@ -316,7 +325,7 @@ elif [[ "$language" = "c" ]]; then
   if [[ "$platform" = "default" ]] || [[ "$platform" = "linux" ]]; then
     if [[ "$compiler" = "default" ]] || [[ "$compiler" = "gcc" ]]; then
       if [[ "$version" = "default" ]]; then
-        g++ "$file" -o cclang 2> output.txt
+        gcc "$file" -o cclang 2> output.txt
         ./cclang &>> output.txt
       elif [[ "$version" != "default" ]]; then
         gcc -std="$version" "$file" -o cclang 2> output.txt
@@ -341,11 +350,9 @@ elif [[ "$language" = "c" ]]; then
   elif [[ "$platform" = "windows" ]]; then
     if [[ "$compiler" = "default" ]] || [[ "$compiler" = "clang" ]]; then
       if [[ "$version" = "default" ]]; then
-        clang --target=x86_64-pc-windows-gnu "$file" -o cclang 2> output.txt
-        ./cclang &>> output.txt
+        clang --target=x86_64-pc-windows-gnu "$file" -o cclang.exe 2> output.txt
       elif [[ "$version" != "default" ]]; then
-        clang --target=x86_64-pc-windows-gnu -std="$version" "$file" -o cclang 2> output.txt
-        ./cclang &>> output.txt
+        clang --target=x86_64-pc-windows-gnu -std="$version" "$file" -o cclang.exe 2> output.txt
       fi
     else
       echo "that C compiler is not available."
@@ -354,16 +361,16 @@ elif [[ "$language" = "c" ]]; then
 
   elif [[ "$platform" = "webassembly" ]] || [[ "$platform" = "wasm" ]]; then
     if [[ "$compiler" = "default" ]] || [[ "$compiler" = "emcc" ]]; then
-      emcc "$file" -s WASM=1 -o cwasm.js 2> output.txt
+      emcc "$file" -s WASM=1 -o cclang.js 2> output.txt
     else
       echo "that C compiler is not available."
-      echo "the available C compiler is clang (default)"
+      echo "the available C compiler is emcc (default)"
     fi
   else
-    echo "C is not available for that platform."
-    echo "C is available for Windows, linux (default)"
+    echo "C is not available for that platform." > output.txt
+    echo "C is available for Windows, WebAssembly, linux (default)" >> output.txt
   fi
 
 else
-  echo "That language is not available."
+  echo "That language is not available (yet)." > output.txt
 fi
