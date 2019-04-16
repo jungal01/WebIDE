@@ -2,6 +2,6 @@
 
 main()
 {
-  puts("Hello World!");
+  puts("Hello Objective C!");
   return 0;
 }

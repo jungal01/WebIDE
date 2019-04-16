@@ -1,3 +1,2 @@
 # Hello World in Ruby
-puts "Hello World!"
-
+puts "Hello Ruby!"

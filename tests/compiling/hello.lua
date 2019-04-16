@@ -1,3 +1,3 @@
 # Hello World in Lua
 
-print "Hello world"
+print "Hello Lua!"
