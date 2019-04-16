@@ -32,7 +32,7 @@
       </a>
     </div>
     <span style="font-size:30px;cursor:pointer" class='right' onclick="openNav()">&#9776; open</span>
-  
+
     <!--&#x1F4C1 closed dir-->
     <!--&#x1F4C2 open dir-->
     <!--&#x1F4C4 file-->
@@ -52,7 +52,7 @@
         <button id='submit' type='submit' onclick='extractContents()'> Run &#x00bb;</button>
         <button id='copybutton' onclick="copytext()">Copy Code to Clipboard</button>
       </div>
-    
+
       <div class="folders">
         <aside id="fileNav">
           <button id="saveFiles" onclick="saveFiles()">Save File</button>
@@ -68,7 +68,7 @@
           <p>&#707; &#x1F4C1; things</p>-->
         </aside>
       </div>
-    
+
       <div class="input">
           <form>
               <input type='text' name='filename' id='filename' size='35' placeholder='File Name'value={{uploadedName}}>
@@ -76,19 +76,27 @@
               <textarea name="codebox" rows="22"  placeholder="Type code here" id="codebox" spellcheck="false" placeholder="Type code here">{{fileContent}}</textarea>
           </form>
       </div>
-    
+
       <div class="output">
         <textarea id="output" rows="8"  readonly></textarea>
       </div>
-      
+
     </div>
-  
+
     <script>
           <!--var button = document.getElementById('save');-->
           <!--button.addEventListener('click', saveTextAsFile);-->
-          
     </script>
-    
+
+    <script>
+      function openNav() {
+      document.getElementById("sidenav").style.width = "250px";
+      }
+      function closeNav() {
+      document.getElementById("sidenav").style.width = "0";
+      }
+    </script>
+
   </body>
 </html>
 
