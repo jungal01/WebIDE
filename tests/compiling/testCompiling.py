@@ -125,7 +125,7 @@ class TestCompiling(unittest.TestCase):
         for file in output:
             if 'exe' in file:
                 win_bin += 1
-            print(file)
+        subprocess.run("rm c* output.txt", shell=True)
         self.assertTrue(win_bin == 4)
 
     def test_wasm(self):
@@ -140,7 +140,7 @@ class TestCompiling(unittest.TestCase):
         for file in output:
             if ('cc' in file) or ('cr' in file):
                 wasm_bin += 1
-        subprocess.run("rm *wasm output.txt", shell=True)
+        subprocess.run("rm c* output.txt", shell=True)
         self.assertTrue(wasm_bin == 5)
 
 
