@@ -1,5 +1,7 @@
 # excluding all compiled code
-c*
+cc*
+cr*
+cO*
 __pycache__
 
 # our log files aren't important to others
