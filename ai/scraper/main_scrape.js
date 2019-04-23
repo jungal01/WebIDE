@@ -14,7 +14,7 @@ var stack_path=path.dirname(require.main.filename)+"\\stack"
 
 
 const octokit = new Octokit({
-  auth: "token 322638e9a027580ff9743f07038acfc7e9169040",
+  auth: "token abcdef",
   throttle: {
     onRateLimit: (retryAfter, options) => {
       octokit.log.warn(`Request quota exhausted for request ${options.method} ${options.url}`)
@@ -58,7 +58,7 @@ const octokit = new Octokit({
 //     }
 
 //     if (usernames.length<min_length){
-//       let user_idx=usernames.length-1 
+//       let user_idx=usernames.length-1
 //       next_user=usernames[user_idx]
 //       while (expanded.has(next_user)){
 //         user_idx--
@@ -178,7 +178,7 @@ async function initialize_usernames(usernames, min_length, expanded,found_users)
       console.log(usernames)
       throw "init_usernames: we found a dead end, the usernames won't grow. all users' followers are scraped in this stack"
     }
-    // let user_idx=usernames.length-1 
+    // let user_idx=usernames.length-1
     //   next_user=usernames[user_idx]
     //   while (expanded.has(next_user)){
     //     user_idx--
@@ -242,7 +242,7 @@ async function add_user(usernames, expanded, found_users) {
         }
       }
       expanded.add(next_user)
-    
+
     }
     catch(err){
       // do nothing, the no_increase will deal with it
@@ -285,7 +285,7 @@ async function get_new_file_name_helper() {
   var highest_index=0
 
   var items= fs.readdirSync(appDir)
-  
+
   for (var i = 0; i < items.length; i++) {
     let splitted=items[i].split('.')
     let index=parseInt(splitted[0])
@@ -348,4 +348,3 @@ async function timeoutFollowing(next_user){
 scrape(100)
 
 // read_stack()
-
