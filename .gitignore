@@ -1,0 +1,12 @@
+# excluding all compiled code
+cc*
+cr*
+cO*
+__pycache__
+
+# our log files aren't important to others
+*.log
+output.txt
+
+# avoid including imported code
+importCode/*

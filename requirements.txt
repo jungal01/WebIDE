@@ -1,0 +1,4 @@
+Flask>=1.0
+torch==0.4.1
+numpy>=1.15
+pathlib==1.0.1

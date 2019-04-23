@@ -1,3 +1,2 @@
-// Hello world in JavaScript
-
-console.log("Hello World");
+// hello world in JavaScript
+console.log("Hello JS!")

@@ -1,0 +1,139 @@
+html {
+  background-color: #757575;
+}
+ 
+body {
+  font-family: "Arial", sans-serif;
+  padding: 15px;
+  background-color: #757575;
+}
+
+textarea {
+  /*padding-left: 40px;*/
+  width: 85%;
+  background-color: black;
+  color: white;
+  font-family: monospace;
+  font-size: 16px;
+  /* border: solid 2px #909090; */
+}
+.grid-container{
+  display: grid;
+  grid-template-columns: 20% auto auto;
+  padding: 10px;
+  grid-gap: 5px;
+}
+
+aside {
+  padding-left: 6px;
+}
+
+span {
+  padding-left: 40px;
+}
+
+.settings {
+  grid-column-start: 1;
+  grid-row-start: 2;
+  text-align: center;
+
+  /* border: 4px; */
+}
+
+.folders {
+  color: white;
+  background-color: black;
+  font-size: 14px;
+  height: 99%;
+}
+
+.folders p:hover{
+  background-color: #909090;
+}
+
+.code {
+  /* width: 100%; */
+}
+
+.input{
+  grid-column-start: 2;
+  grid-column-end: 4;
+  grid-row-start: 1;
+}
+.output {
+  grid-column-start: 2;
+  grid-column-end: 4;
+  grid-row-start: 2;
+  text-align: left;
+  width: 100%;
+}
+#outpu {}
+
+.right {
+  margin: auto;
+  position: relative;
+  float: right;
+}
+
+#codeIn {
+  width: 100%;
+}
+
+#submit {
+  background-color: #008cba;
+  font-size: 16px;
+  color: white;
+  padding: 14px 30px;
+  border: none;
+}
+
+#submit:hover {
+  background-color: white;
+  color: black;
+}
+#copybutton{
+
+}
+
+
+/* side menu bar require DO NOT ERASE*/
+/* The side navigation menu */
+
+.sidenav {
+  height: 100%;
+  width: 0;
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  right: 0px;
+  background-color: #111;
+  overflow-x: hidden;
+  transition: 0.5s;
+  padding-top: 60px;
+}
+
+.sidenav a {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: block;
+  transition: 0.3s;
+}
+
+a:hover {
+  color: white;
+}
+
+.sidenav .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
+}
+
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
