@@ -1,4 +1,4 @@
-function setCookie(filename, code) {
+function setCookie(filename="EmptyFile", code="NoCode") {
   var d = new Date();
   d.setTime(d.getTime() + (60*24*60*60*1000));
   var expires = "expires="+ d.toUTCString();
