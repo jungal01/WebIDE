@@ -86,6 +86,43 @@ if [[ "$help" = "t" ]]; then
 fi
 
 
+
+# removes all binaries when this file is called
+x="$(ls -1)"
+# check for c/c++
+if [[ "$x" = *"cc"* ]]; then
+  rm cc*
+fi
+# check for objective c/c++
+if [[ "$x" = *"cO"* ]]; then
+  rm cO*
+fi
+# check for rust
+if [[ "$x" = *"cr"* ]]; then
+  rm cr*
+fi
+# check for java classes
+if [[ "$x" = *"class"* ]]; then
+  rm *.class
+fi
+# check for ada files
+if [[ "$x" = *"ali"* ]]; then
+  temp="$(ls *ali)"
+  rm ${temp%.*}
+  rm *.o
+  rm *.ali
+fi
+# check for fortran
+if [[ "$x" = *"cf"* ]]; then
+  rm cf*
+fi
+# check for go
+if [[ "$x" = *"cg"* ]]; then
+  rm cg*
+fi
+
+
+
 if [[ "$language" = 'python' ]]; then
   if [[ "$compiler" = "pypy" ]]; then
     if [[ "$version" = "2.7" ]] || [[ "$version" = "2" ]]; then
@@ -220,8 +257,8 @@ elif [[ "$language" = "rust" ]]; then
 elif [[ "$language" = "objc" ]]; then
   if [[ "$compiler" = "default" ]] || [[ "$compiler" = "clang" ]]; then
     if [[ "$platform" = "default" ]] || [[ "$platform" = "linux" ]]; then
-      clang -objc "$file" -o cobjc 2> output.txt
-      ./cobjc &>> output.txt
+      clang -objc "$file" -o cObjc 2> output.txt
+      ./cObjc &>> output.txt
 
     elif [[ "$platform" = "windows" ]]; then
       clang -objc --target=x86_64-pc-windows-gnu "$file" -o cObjc.exe 2> output.txt
