@@ -8,12 +8,6 @@ class TestCompiling(unittest.TestCase):
         command = "../../call-compiler {0} --platform={1} {2}" .format(language, platform, file)
         subprocess.run(command, shell=True)
 
-    def clear_binaries(self):
-        binaries = ["*.ali", '*.o', 'c*', "*.class", "hello", "output.txt"]
-        for i in binaries:
-            command = "rm {}" .format(i)
-            subprocess.run(command, shell=True)
-
     def test_python(self):
         self.compile_file("python", "hello.py")
         file = open('output.txt')
@@ -113,33 +107,65 @@ class TestCompiling(unittest.TestCase):
         file.close()
 
     def test_windows(self):
-        self.clear_binaries()
+        win_bin = 0
         self.compile_file('c', 'hello.c', 'windows')
-        self.compile_file('cpp', 'hello.cpp', 'windows')
-        self.compile_file('objc', 'hello.m', 'windows')
-        self.compile_file('objcpp', 'hello.m', 'windows')
         comm = subprocess.run("ls", shell=True, stdout=subprocess.PIPE)
         output = str(comm).split('\\n')
-
-        win_bin = 0
         for file in output:
             if 'exe' in file:
                 win_bin += 1
-        subprocess.run("rm c* output.txt", shell=True)
+
+        self.compile_file('cpp', 'hello.cpp', 'windows')
+        comm = subprocess.run("ls", shell=True, stdout=subprocess.PIPE)
+        output = str(comm).split('\\n')
+        for file in output:
+            if 'exe' in file:
+                win_bin += 1
+
+        self.compile_file('objc', 'hello.m', 'windows')
+        comm = subprocess.run("ls", shell=True, stdout=subprocess.PIPE)
+        output = str(comm).split('\\n')
+        for file in output:
+            if 'exe' in file:
+                win_bin += 1
+
+        self.compile_file('objcpp', 'hello.m', 'windows')
+        comm = subprocess.run("ls", shell=True, stdout=subprocess.PIPE)
+        output = str(comm).split('\\n')
+        for file in output:
+            if 'exe' in file:
+                win_bin += 1
+
         self.assertTrue(win_bin == 4)
 
     def test_wasm(self):
-        subprocess.run("rm c* output.txt", shell=True)
+        wasm_bin = 0
         self.compile_file('c', 'hello.c', 'wasm')
+        comm = subprocess.run("ls", shell=True, stdout=subprocess.PIPE)
+        output = str(comm).split('\\n')
+        for file in output:
+            print(file)
+            if 'cc' in file:
+                print(file)
+                wasm_bin += 1
+
         self.compile_file('cpp', 'hello.cpp', 'wasm')
+        comm = subprocess.run("ls", shell=True, stdout=subprocess.PIPE)
+        output = str(comm).split('\\n')
+        for file in output:
+            if 'cc' in file:
+                print(file)
+                wasm_bin += 1
+
         self.compile_file('rust', 'hello.rs', 'wasm')
         comm = subprocess.run("ls", shell=True, stdout=subprocess.PIPE)
         output = str(comm).split('\\n')
-
-        wasm_bin = 0
         for file in output:
-            if ('cc' in file) or ('cr' in file):
+            if 'cr' in file:
+                print(file)
                 wasm_bin += 1
+
+        print(wasm_bin)
         subprocess.run("rm c* output.txt", shell=True)
         self.assertTrue(wasm_bin == 5)
 
