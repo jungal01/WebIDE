@@ -1,5 +1,5 @@
 import sys, os, random, json
-import identify_langauge as language
+#import identify_langauge as language
 from flask import *
 from werkzeug.utils import secure_filename
 
@@ -105,11 +105,11 @@ def compile(): #Takes code from JS and returns output to JS
     try: # Try to call the API
         if lang=='AI':
             #if lang != None:
-            #raise Exception("Language entered and API detection requested")
+            raise Exception("Language entered and API detection requested")
             ##Call AI
-            lang = '.txt'
-            version = language.identify(filename+lang)
-            print("Identified language as: "+version)
+            #lang = '.txt'
+            #version = language.identify(filename+lang)
+            #print("Identified language as: "+version)
 
     except Exception as e:
         os.system("echo {} >> errFile.txt".format("API ERROR: "))

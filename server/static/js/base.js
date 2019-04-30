@@ -34,7 +34,8 @@ function save(code="EmptyCode", language='AI', name='NoName') {
     if (code == ""){code="NoCode"}
     if (language==""){language="AI"}
     if (name==""){name="Defualt"}
-    cookieValue = language+":::"+code;
+    let langCode = language+":::"+code;
+    let cookieValue = JSON.stringify(langCode);
     setCookie(name, cookieValue);
 }
 
@@ -49,28 +50,29 @@ function loadCookies(){
 function populateFiles(fileList) {
     var fileBar = document.getElementById("fileList");
     for (var i = 0; i< fileList.length; i++){
-        var nameLangCode = fileList[i].split("=");
-        var name = nameLangCode[0];
-        var langCode = nameLangCode[1];
-        existingFiles[name]=langCode;
+        let nameLangCode = fileList[i].split("=");
+        let name = nameLangCode[0];
+        let langCode = nameLangCode[1];
+        let code = JSON.parse(langCode);
+        existingFiles[name]=code;
     }
     //location.reload();
     for (var key in existingFiles) {
       if (key != ''){
-        var name = key
+        let name = key
         console.log(name)
-        var data = existingFiles[name];
+        let data = existingFiles[name];
         console.log(data);
-        var langCode = data.split(":::");
+        let langCode = data.split(":::");
         console.log(langCode);
         console.debug(langCode);
-        var lang = langCode[0];
-        var code = langCode[1].toString();
-        var para = document.createElement("li");
+        let lang = langCode[0];
+        let code = langCode[1].toString();
+        let para = document.createElement("li");
         para.innerHTML="&emsp; &#x1F4C4; "+name;
         para.onclick = function(){
             document.getElementById("language").value = lang;
-            document.getElementById("filename").value = key;
+            document.getElementById("filename").value = name;
             document.getElementById("codebox").value = code;
         }
         para.style.color = "white";
