@@ -8,14 +8,14 @@
     <link rel="stylesheet" type="text/css" href="static/css/style.css">
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
     <script type="text/javascript" src="../static/js/cookie.js"></script>
-    <script type="text/javascript" src="../static/js/leave_warning.js"></script>
+    <!--<script type="text/javascript" src="../static/js/leave_warning.js"></script>-->
     <script type="text/javascript" src="../static/js/compile.js"></script>
     <script type="text/javascript" src="../static/js/download.js"></script>
     <script type="text/javascript" src="../static/js/base.js"></script>
   </head>
 
   <body>
-  <var id='fileDataUploaded'>{{data}}</var>
+  <var id='fileDataUploaded' hidden>{{data}}</var>
     <div id="sidenav" class="sidenav">
       <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
       <a href="#">Home</a>
@@ -32,7 +32,7 @@
       </a>
     </div>
     <span style="font-size:30px;cursor:pointer" class='right' onclick="openNav()">&#9776; open</span>
-  
+
     <!--&#x1F4C1 closed dir-->
     <!--&#x1F4C2 open dir-->
     <!--&#x1F4C4 file-->
@@ -41,18 +41,27 @@
     <div class="grid-container">
       <div class="settings">
           <select id="language">
-              <option value="AI">AI Detirmined</option>
+              <option value="AI">AI Determined</option>
               <option value=".c">C</option>
-              <option value=".cpp">CPP</option>
+              <option value=".cpp">C++</option>
               <option value=".java">Java</option>
               <option value=".js">JavaScript</option>
               <option value=".py">Python</option>
               <option value=".rs">Rust</option>
+              <option value=".rb">Ruby</option>
+              <option value=".sh">Bash</option>
+              <option value=".lua">Lua</option>
+              <option value=".go">Go</option>
+              <option value=".f90">Fortran</option>
+              <option value=".m">Objective C</option>
+              <option value=".mm">Objective C++</option>
+              <option value=".adb">ADA</option>
+
           </select>
         <button id='submit' type='submit' onclick='extractContents()'> Run &#x00bb;</button>
         <button id='copybutton' onclick="copytext()">Copy Code to Clipboard</button>
       </div>
-    
+
       <div class="folders">
         <aside id="fileNav">
           <button id="saveFiles" onclick="saveFiles()">Save File</button>
@@ -61,6 +70,7 @@
           <br>
           <h3>Files:</h3>
           <br>
+          <ul id='fileList'></ul>
           <!--<p>&#x2304; &#x1F4C2; stuff</p>
           <p>&emsp; &emsp; &#x1F4C4; foo</p>
           <p>&emsp; &emsp; &#x1F4C4; bar</p>
@@ -68,7 +78,7 @@
           <p>&#707; &#x1F4C1; things</p>-->
         </aside>
       </div>
-    
+
       <div class="input">
           <form>
               <input type='text' name='filename' id='filename' size='35' placeholder='File Name'value={{uploadedName}}>
@@ -76,19 +86,19 @@
               <textarea name="codebox" rows="22"  placeholder="Type code here" id="codebox" spellcheck="false" placeholder="Type code here">{{fileContent}}</textarea>
           </form>
       </div>
-    
+
       <div class="output">
         <textarea id="output" rows="8"  readonly></textarea>
       </div>
-      
+
     </div>
-  
+
     <script>
           <!--var button = document.getElementById('save');-->
           <!--button.addEventListener('click', saveTextAsFile);-->
-          
+
     </script>
-    
+
   </body>
 </html>
 

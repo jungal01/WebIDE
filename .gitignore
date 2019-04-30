@@ -1,6 +1,5 @@
 # the javascript is from ts and wasm compilation, so they aren't needed. Also
 # excluding all compiled code
-*.js
 *.wasm
 cRust
 cC*
