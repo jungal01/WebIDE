@@ -113,7 +113,6 @@ def compile(): #Takes code from JS and returns output to JS
             version, confidence = language.identify(name+lang)
             version = version.lower()
             print("Identified language as: "+version)
-
     except Exception as e:
         os.system("echo {} >> errFile.txt".format("API ERROR: "))
         print(e)
