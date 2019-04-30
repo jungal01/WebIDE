@@ -1,5 +1,5 @@
 import sys, os, random, json
-import identify_langauge as language
+import language
 from flask import *
 from werkzeug.utils import secure_filename
 
@@ -108,7 +108,10 @@ def compile(): #Takes code from JS and returns output to JS
             #raise Exception("Language entered and API detection requested")
             ##Call AI
             lang = '.txt'
-            version = language.identify(filename+lang)
+            with open(name+lang, 'w') as f:
+                f.write(code)
+            version, confidence = language.identify(name+lang)
+            version = version.lower()
             print("Identified language as: "+version)
 
     except Exception as e:
@@ -121,16 +124,31 @@ def compile(): #Takes code from JS and returns output to JS
         if lang == '.txt':
             if version == 'java':
                 lang = '.java'
-            elif version == 'js':
+            elif version == 'javascript':
+                version = 'js'
                 lang = '.js'
             elif version == 'c':
                 lang = '.c'
-            elif version == 'cpp':
-                lang = '.cpp'
             elif version == 'python':
                 lang='.py'
             elif version == 'rust':
                 lang = '.rs'
+            elif version = 'lua':
+                lang = '.lua'
+            elif version = 'c++':
+                version = 'cpp'
+                lang = '.cpp'
+            elif version = 'go':
+                lang = '.go'
+            elif version = 'objective-c':
+                version = 'objc'
+                lang = '.m'
+            elif version = 'ruby':
+                lang = '.rb'
+            elif version = 'shell':
+                version = 'bash'
+                lang = '.sh'
+
             else:
                 #version = language.identify(code)
                 raise Exception("Language is not supported")
