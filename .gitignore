@@ -10,3 +10,7 @@ output.txt
 
 # avoid including imported code
 importCode/*
+
+# for ai
+*/log/*
+*/saves/*

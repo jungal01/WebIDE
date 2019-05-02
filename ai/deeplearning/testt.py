@@ -51,7 +51,57 @@ def main_test(file):
 
     return identify_file(model, file, lan_dic, lookup, max_len, vocab_size, bow)
 
+
+def persistent_test(model, lookup, file):
+    lan_dic = {"C": 0,
+               "C#": 1,
+               "C++": 2,
+               "Go": 3,
+               "Java": 4,
+               "Javascript": 5,
+               "Lua": 6,
+               "Objective-C": 7,
+               "Python": 8,
+               "Ruby": 9,
+               "Rust": 10,
+               "Shell": 11}
+    vocab_size = 500
+    bow = True
+    max_len = 100
+
+    return identify_file(model, file, lan_dic, lookup, max_len, vocab_size, bow)
+
+def get_model_lookup():
+    lan_dic = {"C": 0,
+               "C#": 1,
+               "C++": 2,
+               "Go": 3,
+               "Java": 4,
+               "Javascript": 5,
+               "Lua": 6,
+               "Objective-C": 7,
+               "Python": 8,
+               "Ruby": 9,
+               "Rust": 10,
+               "Shell": 11}
+    vocab_size=500
+    bow=True
+    max_len=100
+    model= TransformerBOWMixed(vocab_size=vocab_size, d_model=256, d_inner=16, dropout=0.3, n_layers=8,
+                               xi=0.5)
+    optimizer=Adam(model.parameters(),lr=0.001)
+    vocabuary = select_vocabulary(vocab_size - 2)
+    # turn vocabulary into a look-up dictionary
+    lookup = {}
+    for index, word in enumerate(vocabuary):
+        lookup[word] = index
+
+    id_str = "mixedbow3"
+    model, optimizer, highestepoch, highestiter = load_model(model, optimizer, 0, 0, id_str)
+    return model, lookup
+
 if __name__=="__main__":
     dir_path = Path(os.path.dirname(os.path.realpath(__file__)))
     file=Path(dir_path.parent/"testfile")
-    main_test(file)
+    model,lookup=get_model_lookup()
+    persistent_test(model, lookup, file)

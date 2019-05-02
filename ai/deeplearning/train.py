@@ -225,7 +225,7 @@ def mixedeval(model, optimizer, epoch, i, id_str, validation_data):
 #     return np.mean(val_losses), np.mean(mldq), np.mean(atdq), np.mean(emdq), np.mean(vatdq), np.mean(hitdq)
 #
 
-def train(training_data, validation_data, model, optimizer, starting_epoch, num_epochs, id_str, n_batches, input_long=False):
+def train(training_data, validation_data, model, optimizer, starting_epoch, num_epochs, id_str, logfile, input_long=False):
 
     dq=deque(maxlen=100)
 
@@ -234,11 +234,11 @@ def train(training_data, validation_data, model, optimizer, starting_epoch, num_
             model.train()
             optimizer.zero_grad()
             input, target= data_point
-            # if input_long:
-            #     input=input.long()
-            # else:
-            #     input=input.float()
-            # target=target.long()
+            if input_long:
+                input=input.long()
+            else:
+                input=input.float()
+            target=target.long()
             if len(target.shape)>1:
                 target=target.squeeze(1)
 
@@ -258,15 +258,15 @@ def train(training_data, validation_data, model, optimizer, starting_epoch, num_
             #     print(float(loss.item()))
 
             if i % 100==0:
-                print("epoch", epoch, "iteration", i,"loss",float(loss.item()),"running", np.mean(dq), "hit", hit_percentage)
+                logprint(logfile, "epoch %4d, batch %4d. all: %.6f, hit: %.4f" % (epoch, i, float(loss.item()), hit_percentage))
 
             if i % 10000==0:
                 # wrap, so that python can del the torch objects
-                val_loss, hit_percentage=eval(model, optimizer, epoch, i, id_str, validation_data)
-                print("epoch", epoch, "validation loss", val_loss, "hit", hit_percentage)
+                val_loss, hit_percentage=eval(model, optimizer, epoch, i, id_str, validation_data, input_long=input_long)
+                logprint(logfile, "validation epoch %4d, all: %.6f, hit: %.4f" % (epoch, val_loss, hit_percentage))
 
 
-def eval(model, optimizer, epoch, i, id_str, validation_data):
+def eval(model, optimizer, epoch, i, id_str, validation_data, input_long=False):
     val_losses = []
 
     save_model(model, optimizer, epoch, i, id_str)
@@ -274,11 +274,11 @@ def eval(model, optimizer, epoch, i, id_str, validation_data):
         if j < 100:
             model.eval()
             input, target = data_point
-            # if input_long:
-            #     input=input.long()
-            # else:
-            #     input = input.float()
-            # target = target.long()
+            if input_long:
+                input=input.long()
+            else:
+                input = input.float()
+            target = target.long()
             if len(target.shape) > 1:
                 target = target.squeeze(1)
             input = Variable(input)
@@ -344,7 +344,11 @@ def load_model(computer, optim, starting_epoch, starting_iteration, savestr):
     return computer, optim, highestepoch, highestiter
 
 
-def main_train():
+def lstm_train():
+    """
+    Trains a character based LSTM model.
+    :return:
+    """
     computer=build_model()
     computer.cuda()
     computer.reset_parameters()
@@ -360,11 +364,19 @@ def main_train():
              "Ruby":9,
              "Rust":10,
              "Shell":11}
+
+    id_str="LSTM"
+    logfile = dir_path/("log/"+id_str)
+    logfile.mkdir(exist_ok=True)
+    logfile=logfile/(id_str + "_" + datetime_filename() + ".txt")
+
     t, v= get_data_set(lan_dic)
     optimizer=Adam(computer.parameters(),lr=0.001)
-    ig=TimeSeriesIG(t, lan_dic, 512)
-    dl=DataLoader(ig,batch_size=16,shuffle=True,num_workers=0)
-    train(dl, computer, optimizer)
+    tig=TimeSeriesIG(t, lan_dic, 64)
+    vig=TimeSeriesIG(v,lan_dic, 64)
+    traindl=DataLoader(tig,batch_size=8,shuffle=True,num_workers=8)
+    validdl=DataLoader(vig,batch_size=8,shuffle=True,num_workers=8)
+    train(traindl, validdl, computer, optimizer, 0, 50, id_str, logfile=logfile)
 
 def bigram_train():
     computer= LSTMWrapper(input_size=10000,
@@ -384,11 +396,21 @@ def bigram_train():
              "Ruby":9,
              "Rust":10,
              "Shell":11}
-    t, v= get_data_set(lan_dic)
+
+    id_str="bigramLSTM"
+    logfile = dir_path/("log/"+id_str)
+    logfile.mkdir(exist_ok=True)
+    logfile=logfile/(id_str + "_" + datetime_filename() + ".txt")
+
+    vocab_size=100
+    max_len=50
+    bs=64
+    tig=VocabIGBatchpkl(vocab_size=vocab_size, max_len=max_len, batch_size=bs, bigram=True)
+    vig=VocabIGBatchpkl(vocab_size=vocab_size, max_len=max_len, batch_size=bs, bigram=True, valid=True)
+
+    # print(tig[1])
     optimizer=Adam(computer.parameters(),lr=0.001)
-    ig=TimeSeriesIG(t, lan_dic, 512, bigram=True)
-    dl=DataLoader(ig,batch_size=32,shuffle=True,num_workers=0)
-    train(dl, computer, optimizer)
+    train(tig, vig, computer, optimizer, 0, 50, id_str, logfile=logfile)
 
 
 
@@ -412,14 +434,23 @@ def bigram_bow_train(load=False, resplit=False):
     t, v= get_data_set(lan_dic, load=not resplit, save=resplit)
     optimizer=Adam(computer.parameters(),lr=0.001)
 
+    id_str="bibow"
+    logfile = dir_path/("log/"+id_str)
+    logfile.mkdir(exist_ok=True)
+    logfile=logfile/(id_str + "_" + datetime_filename() + ".txt")
+
     if load:
         computer, optimizer, highestepoch, highestiter = load_model(computer, optimizer, 0, 0, "full")
 
-    tig=TimeSeriesIG(t, lan_dic, 512, bow=True)
-    vig=TimeSeriesIG(v,lan_dic,512, bow=True)
-    traindl=DataLoader(tig,batch_size=64,shuffle=True,num_workers=8)
-    validdl=DataLoader(vig,batch_size=64,shuffle=True,num_workers=8)
-    train(traindl, validdl, computer, optimizer, highestepoch, num_epochs=50)
+    vocab_size=100
+    max_len=50
+    bs=64
+    tig=VocabIGBatchpkl(vocab_size=vocab_size, max_len=max_len, batch_size=bs, bigram=True, bow=True)
+    vig=VocabIGBatchpkl(vocab_size=vocab_size, max_len=max_len, batch_size=bs, bigram=True, bow=True, valid=True)
+
+    # print(tig[1])
+    optimizer=Adam(computer.parameters(),lr=0.001)
+    train(tig, vig, computer, optimizer, 0, 50, id_str, logfile=logfile)
 
 
 
@@ -445,21 +476,28 @@ def vocab_lstm_train(load=False, resplit=False):
     t, v= get_data_set(lan_dic, load=not resplit, save=resplit)
     optimizer=Adam(computer.parameters(),lr=0.001)
 
+    vocabuary = select_vocabulary(vocab_size - 2)
+    # turn vocabulary into a look-up dictionary
+    lookup = {}
+    for index, word in enumerate(vocabuary):
+        lookup[word] = index
+
     id_str="vocablstm"
+    logfile = dir_path/("log/"+id_str)
+    logfile.mkdir(exist_ok=True)
+    logfile=logfile/(id_str + "_" + datetime_filename() + ".txt")
 
     if load:
         computer, optimizer, highestepoch, highestiter = load_model(computer, optimizer, 0, 0, id_str)
     else:
         highestepoch=0
-        highestiter=0
 
     bs=64
-    tig=VocabIG(t, lan_dic, vocab_size)
-    vig=VocabIG(v, lan_dic, vocab_size)
+    tig=VocabIG(t, lan_dic, vocab_size, lookup)
+    vig=VocabIG(v, lan_dic, vocab_size, lookup)
     traindl=DataLoader(tig,collate_fn=pad_collate,batch_size=bs,shuffle=True,num_workers=8)
     validdl=DataLoader(vig,collate_fn=pad_collate,batch_size=bs,shuffle=True,num_workers=8)
-    train(traindl, validdl, computer, optimizer, highestepoch, n_batches=len(tig)//bs, id_str=id_str, num_epochs=50,input_long=True)
-
+    train(traindl, validdl, computer, optimizer, highestepoch, 50, id_str, logfile=logfile, input_long=True)
 
 def vocab_bow_train(load=False, resplit=False):
     vocab_size=5000
@@ -485,6 +523,9 @@ def vocab_bow_train(load=False, resplit=False):
     optimizer=Adam(computer.parameters(),lr=0.001)
 
     id_str="vocabbow"
+    logfile = dir_path/("log/"+id_str)
+    logfile.mkdir(exist_ok=True)
+    logfile=logfile/(id_str + "_" + datetime_filename() + ".txt")
 
     if load:
         computer, optimizer, highestepoch, highestiter = load_model(computer, optimizer, 0, 0, id_str)
@@ -496,7 +537,7 @@ def vocab_bow_train(load=False, resplit=False):
     vig=VocabIGpkl(v, lan_dic, vocab_size, max_len, bow=True)
     traindl=DataLoader(tig,batch_size=bs,shuffle=False,num_workers=8)
     validdl=DataLoader(vig,batch_size=bs,shuffle=False,num_workers=8)
-    train(traindl, validdl, computer, optimizer, highestepoch, n_batches=len(tig)//bs, id_str=id_str, num_epochs=50)
+    train(traindl, validdl, computer, optimizer, highestepoch, 50, id_str, logfile=logfile)
 
 
 def vocab_bow_train_batch_cache(load=False, resplit=False):
@@ -522,7 +563,10 @@ def vocab_bow_train_batch_cache(load=False, resplit=False):
     t, v= get_data_set(lan_dic, load=not resplit, save=resplit)
     optimizer=Adam(computer.parameters(),lr=0.001)
 
-    id_str="vocabbow"
+    id_str="vocabbowbatchpkl"
+    logfile = dir_path/("log/"+id_str)
+    logfile.mkdir(exist_ok=True)
+    logfile=logfile/(id_str + "_" + datetime_filename() + ".txt")
 
     if load:
         computer, optimizer, highestepoch, highestiter = load_model(computer, optimizer, 0, 0, id_str)
@@ -532,7 +576,7 @@ def vocab_bow_train_batch_cache(load=False, resplit=False):
     bs=256
     tig=VocabIGBatchpkl(vocab_size=vocab_size, max_len=max_len, batch_size=bs, bow=True)
     vig=VocabIGBatchpkl(vocab_size=vocab_size, max_len=max_len, batch_size=bs, bow=True, valid=True)
-    train(tig, vig, computer, optimizer, highestepoch, n_batches=len(tig)//bs, id_str=id_str, num_epochs=50)
+    train(tig, vig, computer, optimizer, highestepoch, 50, id_str, logfile=logfile)
 
 
 
@@ -556,6 +600,9 @@ def bow_transformer_cache(load=False, resplit=False):
     optimizer=Adam(computer.parameters(),lr=0.001)
 
     id_str="tranbowsmallvocab" # double all parameters. full vocabulary
+    logfile = dir_path/("log/"+id_str)
+    logfile.mkdir(exist_ok=True)
+    logfile=logfile/(id_str + "_" + datetime_filename() + ".txt")
 
     if load:
         computer, optimizer, highestepoch, highestiter = load_model(computer, optimizer, 0, 0, id_str)
@@ -566,7 +613,7 @@ def bow_transformer_cache(load=False, resplit=False):
     bs=256
     tig=VocabIGBatchpkl(vocab_size=vocab_size, max_len=max_len, batch_size=bs, bow=True)
     vig=VocabIGBatchpkl(vocab_size=vocab_size, max_len=max_len, batch_size=bs, bow=True, valid=True)
-    train(tig, vig, computer, optimizer, highestepoch, n_batches=len(tig)//bs, id_str=id_str, num_epochs=100)
+    train(tig, vig, computer, optimizer, highestepoch, 50, id_str, logfile=logfile)
 
 
 def standard_transformer_cache(load=False, resplit=False):
@@ -603,6 +650,9 @@ def standard_transformer_cache(load=False, resplit=False):
     optimizer=Adam(computer.parameters(),lr=0.001)
 
     id_str="transtd"
+    logfile = dir_path/("log/"+id_str)
+    logfile.mkdir(exist_ok=True)
+    logfile=logfile/(id_str + "_" + datetime_filename() + ".txt")
 
     if load:
         computer, optimizer, highestepoch, highestiter = load_model(computer, optimizer, 0, 0, id_str)
@@ -613,7 +663,7 @@ def standard_transformer_cache(load=False, resplit=False):
     bs=64
     tig=VocabIGBatchpkl(vocab_size=vocab_size, max_len=max_len, batch_size=bs, bow=False)
     vig=VocabIGBatchpkl(vocab_size=vocab_size, max_len=max_len, batch_size=bs, bow=False, valid=True)
-    train(tig, vig, computer, optimizer, highestepoch, n_batches=len(tig)//bs, id_str=id_str, num_epochs=100)
+    train(tig, vig, computer, optimizer, highestepoch, 50, id_str, logfile=logfile, input_long=True)
 
 
 
@@ -736,4 +786,4 @@ def mixed_bow_transformer_cache_2(load=False):
 
 
 if __name__=="__main__":
-    mixed_bow_transformer_cache(load=True)
+    standard_transformer_cache()

@@ -26,9 +26,9 @@ class LSTMWrapper(nn.Module):
 
 def build_model():
     # model will predict at each input character.
-    computer = LSTMWrapper(input_size=256,
-                           hidden_size=512,
-                           num_layers=32)
+    computer = LSTMWrapper(input_size=100,
+                           hidden_size=64,
+                           num_layers=8)
     return computer
 
 
