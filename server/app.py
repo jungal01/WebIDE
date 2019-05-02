@@ -1,5 +1,5 @@
 import sys, os, random, json
-import language
+from identify_language import prepare_model_lookup, persistent_identify
 from flask import *
 from werkzeug.utils import secure_filename
 
@@ -9,6 +9,7 @@ app=Flask(__name__)
 UPLOAD_FOLDER="/uploads"
 ALLOWED_EXTENSIONS = set(['txt','py','js','java','cpp','c','rs'])
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+model, lookup= prepare_model_lookup()
 
 @app.route('/getfile', methods=['GET','POST'])
 def getfile():
@@ -110,7 +111,7 @@ def compile(): #Takes code from JS and returns output to JS
             lang = '.txt'
             with open(name+lang, 'w') as f:
                 f.write(code)
-            version, confidence = language.identify(name+lang)
+            version, confidence = persistent_identify(model, lookup, name+lang)
             version = version.lower()
             print("Identified language as: "+version)
     except Exception as e:
@@ -132,19 +133,19 @@ def compile(): #Takes code from JS and returns output to JS
                 lang='.py'
             elif version == 'rust':
                 lang = '.rs'
-            elif version = 'lua':
+            elif version == 'lua':
                 lang = '.lua'
-            elif version = 'c++':
+            elif version == 'c++':
                 version = 'cpp'
                 lang = '.cpp'
-            elif version = 'go':
+            elif version == 'go':
                 lang = '.go'
-            elif version = 'objective-c':
+            elif version == 'objective-c':
                 version = 'objc'
                 lang = '.m'
-            elif version = 'ruby':
+            elif version == 'ruby':
                 lang = '.rb'
-            elif version = 'shell':
+            elif version == 'shell':
                 version = 'bash'
                 lang = '.sh'
 
