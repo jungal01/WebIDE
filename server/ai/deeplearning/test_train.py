@@ -1,6 +1,5 @@
 import unittest
 from ai.deeplearning.train import *
-from ai.deeplearning.testt import *
 
 class CloneRepoTest(unittest.TestCase):
     def test_model_init(self):
@@ -128,9 +127,3 @@ class CloneRepoTest(unittest.TestCase):
         self.assertEqual(np.mean(atdq),np.mean(atdq))
         self.assertEqual(np.mean(emdq),np.mean(emdq))
         self.assertEqual(np.mean(vatdq),np.mean(vatdq))
-
-    def test_test(self):
-        dir_path = Path(os.path.dirname(os.path.realpath(__file__)))
-        file = Path(dir_path.parent / "testfile")
-        model, lookup = get_model_lookup()
-        persistent_test(model, lookup, file)

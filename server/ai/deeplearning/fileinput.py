@@ -14,8 +14,7 @@ from joblib import Parallel, delayed
 # constants, do not modify
 pkl_dir=Path("C:\\") / "Git" / "trdata" / "pkl"
 
-# corpus_dir=Path(os.path.dirname(os.path.abspath(__file__))).parent/"trdata"/"languages"
-corpus_dir=Path("D:/Git/trdata")/"languages"
+corpus_dir=Path(os.path.dirname(os.path.abspath(__file__))).parent/"trdata"/"languages"
 pickle_batch_size= 1024
 pickle_vocab_size=50000
 pickle_file_length=1000
@@ -58,12 +57,9 @@ def get_data_set(lan_dic, proportion=0.2, load=True, save=False, shuffle=True):
     valid=[]
 
     count=1e10
-    try:
-        for language in lan_dic:
-            cc = len(os.listdir(corpus_dir / language))
-            count=min(count, cc)
-    except FileNotFoundError:
-        raise FileNotFoundError("Your training files do not exist or path is incorrect.")
+    for language in lan_dic:
+        cc = len(os.listdir(corpus_dir / language))
+        count=min(count, cc)
 
     for language in lan_dic:
         tt,vv=train_valid_files_split(language,count,proportion)
@@ -159,7 +155,7 @@ def training_file_to_input_target_arrays(train_valid_point, lan_dic, input_len):
     :param train_valid_point: (language_script_path, file_len)
     :param lan_dic: dictionary of languages and their target index
     :param input_len: the size of the cut of the file to be fed in
-    :return: numpy arrays, one hot per character
+    :return: numpy arrays
     '''
     target=np.zeros(1,dtype=np.long)
     inputs=np.zeros((input_len,100))
@@ -182,10 +178,7 @@ def training_file_to_input_target_arrays(train_valid_point, lan_dic, input_len):
         try:
             char=char.encode('ascii',errors='ignore').decode('ascii')
             if char != '':
-                try:
-                    inputs[idx-empty_count,string_map[char]]=1
-                except KeyError:
-                    inputs[idx-empty_count,string_map[" "]]=1
+                inputs[idx-empty_count,string_map[char]]=1
             else:
                 empty_count+=1
         except IndexError:
@@ -193,62 +186,62 @@ def training_file_to_input_target_arrays(train_valid_point, lan_dic, input_len):
 
     return inputs, target
 
-#
-# def training_file_to_bigram(train_valid_point, lan_dic, input_len):
-#     '''
-#
-#     :param train_valid_point: (language_script_path, file_len)
-#     :param lan_dic: dictionary of languages and their target index
-#     :param input_len: the size of the cut of the file to be fed in
-#     :return: numpy arrays
-#     '''
-#
-#     target=np.zeros(1,dtype=np.long)
-#     inputs=np.zeros((input_len,10000))
-#
-#     scriptpath, file_len=train_valid_point
-#     lang,file=scriptpath.split('/')
-#     target_index=lan_dic[lang]
-#     target[0]=target_index
-#
-#     # ensure that at least 20 char is read
-#     # no longer seek randomly
-#     offset=0
-#     with open(corpus_dir/scriptpath,'r', encoding="utf8", errors='ignore') as file:
-#         file.seek(offset,0)
-#         input_char=file.read(input_len)
-#
-#     # this effectively allows you to skip any non ascii characters
-#     for idx, char in enumerate(input_char):
-#         char=char.encode('ascii',errors='ignore').decode('ascii')
-#         if char not in string_map:
-#             char = ' '
-#         if idx==0:
-#             pass
-#         else:
-#             try:
-#                 bigram_idx=string_map[lastchar]*100+string_map[char]
-#                 inputs[idx, bigram_idx] = 1
-#             except KeyError:
-#                 char=" "
-#                 bigram_idx=string_map[lastchar]*100+string_map[char]
-#                 inputs[idx, bigram_idx] = 1
-#         lastchar=char
-#     bigram_idx = string_map[lastchar] * 100 + string_map[" "]
-#     inputs[idx,bigram_idx]=1
-#
-#     #
-#     # for idx,char in enumerate(input_char):
-#     #     try:
-#     #         char=char.encode('ascii',errors='ignore').decode('ascii')
-#     #         if char != '':
-#     #             inputs[idx-empty_count,string_map[char]]=1
-#     #         else:
-#     #             empty_count+=1
-#     #     except IndexError:
-#     #         print("What?")
-#
-#     return inputs, target
+
+def training_file_to_bigram(train_valid_point, lan_dic, input_len):
+    '''
+
+    :param train_valid_point: (language_script_path, file_len)
+    :param lan_dic: dictionary of languages and their target index
+    :param input_len: the size of the cut of the file to be fed in
+    :return: numpy arrays
+    '''
+
+    target=np.zeros(1,dtype=np.long)
+    inputs=np.zeros((input_len,10000))
+
+    scriptpath, file_len=train_valid_point
+    lang,file=scriptpath.split('/')
+    target_index=lan_dic[lang]
+    target[0]=target_index
+
+    # ensure that at least 20 char is read
+    # no longer seek randomly
+    offset=0
+    with open(corpus_dir/scriptpath,'r', encoding="utf8", errors='ignore') as file:
+        file.seek(offset,0)
+        input_char=file.read(input_len)
+
+    # this effectively allows you to skip any non ascii characters
+    for idx, char in enumerate(input_char):
+        char=char.encode('ascii',errors='ignore').decode('ascii')
+        if char not in string_map:
+            char = ' '
+        if idx==0:
+            pass
+        else:
+            try:
+                bigram_idx=string_map[lastchar]*100+string_map[char]
+                inputs[idx, bigram_idx] = 1
+            except KeyError:
+                char=" "
+                bigram_idx=string_map[lastchar]*100+string_map[char]
+                inputs[idx, bigram_idx] = 1
+        lastchar=char
+    bigram_idx = string_map[lastchar] * 100 + string_map[" "]
+    inputs[idx,bigram_idx]=1
+
+    #
+    # for idx,char in enumerate(input_char):
+    #     try:
+    #         char=char.encode('ascii',errors='ignore').decode('ascii')
+    #         if char != '':
+    #             inputs[idx-empty_count,string_map[char]]=1
+    #         else:
+    #             empty_count+=1
+    #     except IndexError:
+    #         print("What?")
+
+    return inputs, target
 
 
 def training_file_to_bigram_bow(train_valid_point, lan_dic, input_len):
@@ -335,25 +328,24 @@ def training_file_to_bigram(train_valid_point, lan_dic, input_len):
         input_char = file.read(input_len)
 
     # this effectively allows you to skip any non ascii characters
-    if len(input_char)!=0:
-        for idx, char in enumerate(input_char):
-            char = char.encode('ascii', errors='ignore').decode('ascii')
-            if char not in string_map:
-                char = ' '
-            if idx == 0:
-                pass
-            else:
-                try:
-                    bigram_idx=string_map[lastchar]*100+string_map[char]
-                    inputs[idx, bigram_idx] = 1
-                except KeyError:
-                    char=" "
-                    print(lastchar)
-                    bigram_idx=string_map[lastchar]*100+string_map[char]
-                    inputs[idx, bigram_idx] = 1
-            lastchar = char
-        bigram_idx = string_map[lastchar] * 100 + string_map[" "]
-        inputs[idx, bigram_idx] = 1
+    for idx, char in enumerate(input_char):
+        char = char.encode('ascii', errors='ignore').decode('ascii')
+        if char not in string_map:
+            char = ' '
+        if idx == 0:
+            pass
+        else:
+            try:
+                bigram_idx=string_map[lastchar]*100+string_map[char]
+                inputs[idx, bigram_idx] = 1
+            except KeyError:
+                char=" "
+                print(lastchar)
+                bigram_idx=string_map[lastchar]*100+string_map[char]
+                inputs[idx, bigram_idx] = 1
+        lastchar = char
+    bigram_idx = string_map[lastchar] * 100 + string_map[" "]
+    inputs[idx, bigram_idx] = 1
 
     #
     # for idx,char in enumerate(input_char):
@@ -366,7 +358,7 @@ def training_file_to_bigram(train_valid_point, lan_dic, input_len):
     #     except IndexError:
     #         print("What?")
 
-    # inputs=inputs.sum(0)
+    inputs=inputs.sum(0)
 
     return inputs, target
 
@@ -383,7 +375,6 @@ def batch_one_hot_mean(indices,num_classes,batch_size, time_length):
     for bidx in range(batch_size):
         np.add.at(sums[bidx,:],indices[bidx,:],1)
     return sums/time_length
-
 
 def training_file_to_vocab_helper(file_path, lookup, max_len, vocab_size, bow):
     inputs = []
@@ -688,19 +679,18 @@ class TimeSeriesIG(Dataset):
         return i,t
 
 class VocabIG(Dataset):
-    def __init__(self, file_list, lan_dic, vocab_size, lookup, bow=False):
+    def __init__(self, file_list, lan_dic, vocab_size, bow=False):
         self.file_list=file_list
         self.lan_dic=lan_dic
         self.vocab_size=vocab_size
         self.bow=bow
-        self.lookup=lookup
 
     def __len__(self):
         return len(self.file_list)
 
     def __getitem__(self, item):
         data_point=self.file_list[item]
-        i,t= training_file_to_vocab(data_point, self.lan_dic, self.vocab_size, self.lookup, bow=self.bow)
+        i,t= training_file_to_vocab(data_point, self.lan_dic, self.vocab_size,bow=self.bow)
 
         return i,t
 
@@ -754,7 +744,7 @@ class VocabIGpkl(Dataset):
             return i, t
 
 class VocabIGBatchpkl():
-    def __init__(self, vocab_size, max_len, bow=False, bigram=False, batch_size=64, valid=False):
+    def __init__(self, vocab_size, max_len, bow=False, batch_size=64, valid=False):
         # I do not see a way to do it with Dataset interface. I will have to do it myself.
         self.pkl_dir = pkl_dir
         if valid:
@@ -787,8 +777,6 @@ class VocabIGBatchpkl():
         self.vocab_size=vocab_size
         self.max_len=max_len
         self.bow=bow
-        self.bigram=bigram
-
 
     def __len__(self):
         return self.num_files*self.binb
@@ -813,19 +801,8 @@ class VocabIGBatchpkl():
 
         # shorten the length if over
         i=i[:,:self.max_len]
-        if self.bigram:
-            emp=np.zeros([self.batch_size,self.max_len,self.vocab_size**2])
-            for x in range(self.batch_size):
-                for y in range(self.max_len):
-                    idx = i[x, y]
-                    if y!=0:
-                        prev_idx=i[x,y-1]
-                        idx=prev_idx*self.vocab_size+idx
-                    np.add.at(emp, (x, y, idx), 1)
-            i=emp.astype(np.long)
-            if self.bow:
-                i=i.mean(1)
-        elif self.bow:
+
+        if self.bow:
             input_oh = batch_one_hot_mean(i, self.vocab_size, batch_size=self.batch_size, time_length=self.max_len)
             i,t= input_oh, t.astype(np.long)
 
@@ -1127,5 +1104,5 @@ def repickle(pkl_dir, n_proc=8):
 
 
 if __name__=="__main__":
-    from ai.deeplearning.fileinput import pkl_dir
+    from deeplearning.fileinput import pkl_dir
     main6(pkl_dir)

@@ -1,4 +1,0 @@
-Kevin
-
-I recieved a lot of help from the other members as I worked on the backend and serverside. I was tasked with getting everyone's programs working on a single service and finding issues with the code and different programs when they interact. 
-I assisted in overal design of the project and I had a say in what technologies was used.
