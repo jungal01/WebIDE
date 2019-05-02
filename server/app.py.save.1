@@ -188,7 +188,7 @@ def compile(): #Takes code from JS and returns output to JS
         result = str(e)
 
     os.system("rm {}".format(name+lang))
-    os.system("rm output.txt")
+    
     return make_response(result)
 
 @app.route('/bitecode', methods=['POST'])

@@ -12,8 +12,8 @@ function compile(code, lang, name='nameMe'){
 }
 
 function callbackFunc(response){
-    var returned = response.split("::")[1];
-    var lang = response.split("::")[0];
+    var returned = response.split(":::")[1];
+    var lang = response.split(":::")[0];
     document.getElementById('language').value = lang;
     document.getElementById('output').value=returned;
 }
