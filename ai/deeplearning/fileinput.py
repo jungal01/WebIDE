@@ -24,23 +24,23 @@ string_map={}
 for idx,char in enumerate(string.printable):
     string_map[char]=idx
 
-
-def get_array(filename="somecode.txt"):
-
-    with open(filename,'r') as file:
-        while True:
-            c=file.read(1)
-            if not c:
-                break
-            dim=ord(c)
-            thisarr=np.zeros([256])
-            thisarr[dim]=1
-            yield thisarr
+#
+# def get_array(filename="somecode.txt"):
+#
+#     with open(filename,'r') as file:
+#         while True:
+#             c=file.read(1)
+#             if not c:
+#                 break
+#             dim=ord(c)
+#             thisarr=np.zeros([256])
+#             thisarr[dim]=1
+#             yield thisarr
 
 
 # this function is critical for generating all datasets in all plans.
 # it communicates with the scraped files.
-def get_data_set(lan_dic, proportion=0.2, load=True, save=False, shuffle=True):
+def get_data_set(lan_dic, proportion=0.2, load=True, save=False, shuffle=True, no_file_length=True, debug=False):
     pkl_dir=corpus_dir.parent / "train_valid.pkl"
     if load:
         if pkl_dir.exists():
@@ -66,7 +66,7 @@ def get_data_set(lan_dic, proportion=0.2, load=True, save=False, shuffle=True):
         raise FileNotFoundError("Your training files do not exist or path is incorrect.")
 
     for language in lan_dic:
-        tt,vv=train_valid_files_split(language,count,proportion)
+        tt,vv=train_valid_files_split(language,count,no_file_length,proportion, debug)
         train+=tt
         valid+=vv
 
@@ -85,7 +85,7 @@ def get_data_set(lan_dic, proportion=0.2, load=True, save=False, shuffle=True):
     return train, valid
 
 
-def train_valid_files_split(language, count, no_file_length=True, proportion=0.2):
+def train_valid_files_split(language, count, no_file_length=True, proportion=0.2, debug=False):
     """
     Given a language folder, splits to train valid, calculates the file length
 
@@ -95,6 +95,8 @@ def train_valid_files_split(language, count, no_file_length=True, proportion=0.2
     """
     all_files=os.listdir(corpus_dir/language)
     all_files=random.sample(all_files,k=count)
+    if debug:
+        all_files=all_files[1:10]
 
     valid_size=int(len(all_files)*proportion)+1
     valid_list=random.sample(all_files,valid_size)
@@ -471,7 +473,7 @@ def training_file_to_vocab(train_valid_point, lan_dic, vocab_size, lookup, max_l
     #     return inputs, target
 
 
-def rep(file):
+def rep(file, lookup):
     # long length and vocab
     # if you don't need it you can chop if off
 
@@ -490,7 +492,7 @@ def rep(file):
 
     pkl_dir=corpus_dir.parent/"pkl_dir"
 
-    inputs, target = training_file_to_vocab(file, lan_dic=lan_dic, vocab_size=50000, max_len=1000, bow=False)
+    inputs, target = training_file_to_vocab(file, lookup=lookup, lan_dic=lan_dic, vocab_size=50000, max_len=1000, bow=False)
     newfilename = file[0] + ".pkl"
 
     fpath = pkl_dir / newfilename
@@ -500,16 +502,29 @@ def rep(file):
 
     return 0
 
-def vocab_pickle(file_list, lan_dic, n_proc):
-    pkl_dir=corpus_dir.parent/"pkl_dir"
-    pkl_dir.mkdir(exist_ok=True)
+def vocab_pickle(file_list, lan_dic, n_proc, lookup, debug=False):
+    if debug:
+        pkl_dir=corpus_dir.parent/"pkl_dir_debug"
+        pkl_dir.mkdir(exist_ok=True)
+    else:
+        pkl_dir=corpus_dir.parent/"pkl_dir"
+        pkl_dir.mkdir(exist_ok=True)
     for lan in lan_dic:
         land_dir=pkl_dir/lan
         land_dir.mkdir(exist_ok=True)
 
 
-    # parallel_process(file_list, rep, n_jobs=n_proc)
-    Parallel(n_jobs=n_proc)(delayed(rep)(file) for file in file_list)
+    if debug:
+        file_list=file_list[1:10]
+        for file in file_list:
+            rep(file, lookup)
+    else:
+        # parallel_process(file_list, rep, n_jobs=n_proc)
+        Parallel(n_jobs=n_proc)(delayed(rep)(file, lookup) for file in file_list)
+
+    if debug:
+        import shutil
+        shutil.rmtree(pkl_dir)
 
 def pad_sequence(sequences, batch_first=False, padding_value=0):
     r"""Pad a list of variable length Tensors with zero
@@ -595,76 +610,76 @@ def pad_collate(args):
 #     dl=DataLoader(ig, collate_fn =pad_collate_with_factory(vocab_size-1),*args,**kwargs)
 #     return dl
 
-
-def pad_collate_2(args):
-    """
-    :param args:
-    :return:
-    """
-    val=list(zip(*args))
-    tensors=[[torch.from_numpy(arr) for arr in vv] for vv in val]
-    padded=[pad_sequence(ten) for ten in tensors]
-    padded[0]=padded[0].permute(1,0,2)
-    padded[1]=padded[1].permute(1,0)
-    return padded
-
 #
+# def pad_collate_2(args):
+#     """
+#     :param args:
+#     :return:
+#     """
+#     val=list(zip(*args))
+#     tensors=[[torch.from_numpy(arr) for arr in vv] for vv in val]
+#     padded=[pad_sequence(ten) for ten in tensors]
+#     padded[0]=padded[0].permute(1,0,2)
+#     padded[1]=padded[1].permute(1,0)
+#     return padded
+#
+# #
 # def get_dataloader(ig, vocab_size, *args, **kwargs):
 #     dl=DataLoader(ig, collate_fn =pad_collate_with_factory(vocab_size-1),*args,**kwargs)
 #     return dl
+#
+# def file_to_array(file, input_len):
+#     """
+#     read the first input_len chars
+#     this method can be improved if you want multiple sampling
+#     :param file:
+#     :param input_len:
+#     :return:
+#     """
+#     inputs=np.zeros((input_len,100))
+#
+#     with open(file,'r', encoding="utf8", errors='ignore') as file:
+#         input_char=file.read(input_len)
+#
+#     # this effectively allows you to skip any non ascii characters
+#     empty_count=0
+#     for idx,char in enumerate(input_char):
+#         try:
+#             char=char.encode('ascii',errors='ignore').decode('ascii')
+#             if char != '':
+#                 inputs[idx-empty_count,ord(char)]=1
+#             else:
+#                 empty_count+=1
+#         except IndexError:
+#             print("What?")
+#     return inputs
 
-def file_to_array(file, input_len):
-    """
-    read the first input_len chars
-    this method can be improved if you want multiple sampling
-    :param file:
-    :param input_len:
-    :return:
-    """
-    inputs=np.zeros((input_len,100))
-
-    with open(file,'r', encoding="utf8", errors='ignore') as file:
-        input_char=file.read(input_len)
-
-    # this effectively allows you to skip any non ascii characters
-    empty_count=0
-    for idx,char in enumerate(input_char):
-        try:
-            char=char.encode('ascii',errors='ignore').decode('ascii')
-            if char != '':
-                inputs[idx-empty_count,ord(char)]=1
-            else:
-                empty_count+=1
-        except IndexError:
-            print("What?")
-    return inputs
-
-
-def file_to_torch(file, input_len, vocab_size=500, max_len=1000):
-    lan_dic = {"C": 0,
-               "C#": 1,
-               "C++": 2,
-               "Go": 3,
-               "Java": 4,
-               "Javascript": 5,
-               "Lua": 6,
-               "Objective-C": 7,
-               "Python": 8,
-               "Ruby": 9,
-               "Rust": 10,
-               "Shell": 11}
-    vocabuary = select_vocabulary(vocab_size - 2)
-    # turn vocabulary into a look-up dictionary
-    lookup = {}
-    for index, word in enumerate(vocabuary):
-        lookup[word] = index
-    inputs, target = training_file_to_vocab(file, lan_dic=lan_dic, vocab_size=vocab_size, lookup=lookup,
-                                            max_len=max_len, bow=False)
-
-    array=torch.from_numpy(array)
-    array=array.unsqueeze(0)
-    array=array.float().cuda()
-    return array
+#
+# def file_to_torch(file, input_len, vocab_size=500, max_len=1000):
+#     lan_dic = {"C": 0,
+#                "C#": 1,
+#                "C++": 2,
+#                "Go": 3,
+#                "Java": 4,
+#                "Javascript": 5,
+#                "Lua": 6,
+#                "Objective-C": 7,
+#                "Python": 8,
+#                "Ruby": 9,
+#                "Rust": 10,
+#                "Shell": 11}
+#     vocabuary = select_vocabulary(vocab_size - 2)
+#     # turn vocabulary into a look-up dictionary
+#     lookup = {}
+#     for index, word in enumerate(vocabuary):
+#         lookup[word] = index
+#     inputs, target = training_file_to_vocab(file, lan_dic=lan_dic, vocab_size=vocab_size, lookup=lookup,
+#                                             max_len=max_len, bow=False)
+#
+#     array=torch.from_numpy(array)
+#     array=array.unsqueeze(0)
+#     array=array.float().cuda()
+#     return array
 
 class TimeSeriesIG(Dataset):
     def __init__(self, data, lan_dic, input_len, bigram=False, bow=False):
@@ -870,83 +885,6 @@ class VocabIGBatchpkl():
         self.load_numpy()
         return self
 
-def main():
-    lan_dic = {"C": 0,
-               "C#": 1,
-               "C++": 2,
-               "Go": 3,
-               "Java": 4,
-               "Javascript": 5,
-               "Lua": 6,
-               "Objective-C": 7,
-               "Python": 8,
-               "Ruby": 9,
-               "Rust": 10,
-               "Shell": 11}
-    train, valid = get_data_set(lan_dic)
-    ig=TimeSeriesIG(train, lan_dic, 512)
-    for i in range(10):
-        print(ig[i])
-
-def main2():
-    lan_dic = {"C": 0,
-               "C#": 1,
-               "C++": 2,
-               "Go": 3,
-               "Java": 4,
-               "Javascript": 5,
-               "Lua": 6,
-               "Objective-C": 7,
-               "Python": 8,
-               "Ruby": 9,
-               "Rust": 10,
-               "Shell": 11}
-    train, valid = get_data_set(lan_dic)
-    ig=TimeSeriesIG(train, lan_dic, 512,bigram=True)
-    for i in range(10):
-        a=ig[i]
-        print(a)
-
-def main3():
-    lan_dic = {"C": 0,
-               "C#": 1,
-               "C++": 2,
-               "Go": 3,
-               "Java": 4,
-               "Javascript": 5,
-               "Lua": 6,
-               "Objective-C": 7,
-               "Python": 8,
-               "Ruby": 9,
-               "Rust": 10,
-               "Shell": 11}
-    train, valid = get_data_set(lan_dic)
-    ig = TimeSeriesIG(train, lan_dic, 512, bow=True)
-    for i in range(100):
-        a = ig[i]
-        print(a)
-
-
-def main4():
-    lan_dic = {"C": 0,
-               "C#": 1,
-               "C++": 2,
-               "Go": 3,
-               "Java": 4,
-               "Javascript": 5,
-               "Lua": 6,
-               "Objective-C": 7,
-               "Python": 8,
-               "Ruby": 9,
-               "Rust": 10,
-               "Shell": 11}
-    train, valid = get_data_set(lan_dic)
-    ig = VocabIG(train, lan_dic,50000)
-    for i in range(100):
-        a = ig[i]
-        print(a)
-
-
 
 def rep_batch(files, idx, pkldir, lookup, vocab_size=50000, max_len=1000):
     # long length and vocab
@@ -987,7 +925,7 @@ def rep_batch(files, idx, pkldir, lookup, vocab_size=50000, max_len=1000):
 
     return 0
 
-def vocab_batch_pickle(pkl_dir, t, v, n_proc):
+def vocab_batch_pickle(pkl_dir, t, v, n_proc, debug=False):
     batch_size=pickle_batch_size
     max_len=pickle_file_length
     vocab_size=pickle_vocab_size
@@ -1018,10 +956,39 @@ def vocab_batch_pickle(pkl_dir, t, v, n_proc):
         n_batches=len(t)//batch_size
         # for idx in tqdm(range(n_batches)):
             # rep_batch(ds[idx*batch_size:idx*batch_size+batch_size], lookup=lookup, idx=idx, pkldir=pkl_dir, max_len=max_len, vocab_size=vocab_size)
-        Parallel(backend="threading", n_jobs=n_proc)(delayed(rep_batch)(ds[idx*batch_size:idx*batch_size+batch_size], lookup=lookup, idx=idx, pkldir=pkl_dir, max_len=max_len, vocab_size=vocab_size) for idx in range(n_batches))
+        if not debug:
+            Parallel(backend="threading", n_jobs=n_proc)(delayed(rep_batch)(ds[idx*batch_size:idx*batch_size+batch_size], lookup=lookup, idx=idx, pkldir=pkl_dir, max_len=max_len, vocab_size=vocab_size) for idx in range(n_batches))
+        else:
+            for idx in range(0,2):
+                rep_batch(ds[idx * batch_size:idx * batch_size + batch_size], lookup=lookup, idx=idx, pkldir=pkl_dir, max_len=max_len, vocab_size=vocab_size)
     print("pickled")
 
-def batch_pickle(n_proc=8, batch_size=256, resplit=True):
+def repickle_vocab_pickle(resplit=True, debug=False):
+    lan_dic = {"C": 0,
+               "C#": 1,
+               "C++": 2,
+               "Go": 3,
+               "Java": 4,
+               "Javascript": 5,
+               "Lua": 6,
+               "Objective-C": 7,
+               "Python": 8,
+               "Ruby": 9,
+               "Rust": 10,
+               "Shell": 11}
+
+    train,valid=get_data_set(lan_dic,load=not resplit, save=resplit)
+    vocabuary = select_vocabulary(50000 - 2)
+    # turn vocabulary into a look-up dictionary
+    lookup = {}
+    for index, word in enumerate(vocabuary):
+        lookup[word] = index
+    vocab_pickle(train, lan_dic, 8, lookup, debug=debug)
+    vocab_pickle(valid, lan_dic, 8, lookup, debug=debug)
+
+
+
+def batch_pickle(n_proc=8, batch_size=256, resplit=True, debug=False):
     lan_dic = {"C": 0,
                "C#": 1,
                "C++": 2,
@@ -1035,78 +1002,23 @@ def batch_pickle(n_proc=8, batch_size=256, resplit=True):
                "Rust": 10,
                "Shell": 11}
     train,valid=get_data_set(lan_dic,load=not resplit, save=resplit)
-    vocab_batch_pickle(train, valid, batch_size, lan_dic, n_proc)
+    vocab_batch_pickle(train, valid, batch_size, lan_dic, n_proc, debug=debug)
 
 
 
-def main5():
-    lan_dic = {"C": 0,
-               "C#": 1,
-               "C++": 2,
-               "Go": 3,
-               "Java": 4,
-               "Javascript": 5,
-               "Lua": 6,
-               "Objective-C": 7,
-               "Python": 8,
-               "Ruby": 9,
-               "Rust": 10,
-               "Shell": 11}
-    train, valid = get_data_set(lan_dic)
-    ig = VocabIGpkl(train, lan_dic, 50000, 100, bow=True)
-    ig2 = VocabIG(train, lan_dic,50000, bow=True)
-    # for i in range(100):
-    #     a = ig[i]
-    #     print(a)
-    a,b=ig[1714]
-    a2,b2=ig2[1714]
-    a3,b3=ig[169714]
-    a4,b4=ig2[169714]
-    assert((a==a2).all())
-    assert((b==b2).all())
-    assert((a3==a4).all())
-    assert((b3==b4).all())
-    print("Done")
-
-def testvocabigbatchpkl():
-    tig = VocabIGBatchpkl(5000,100,bow=False)
-
-    a = 0
-    for i in tig:
-        a += 1
-        if a < 10:
-            print(i)
 
 
-def main6():
-    lan_dic = {"C": 0,
-               "C#": 1,
-               "C++": 2,
-               "Go": 3,
-               "Java": 4,
-               "Javascript": 5,
-               "Lua": 6,
-               "Objective-C": 7,
-               "Python": 8,
-               "Ruby": 9,
-               "Rust": 10,
-               "Shell": 11}
-    train, valid = get_data_set(lan_dic)
-    ig=VocabIGBatchpkl(vocab_size=500, max_len=100, batch_size=64, bow=False)
-    for idx,i in enumerate(ig):
-        if idx>100:
-            break
-        print(i)
-
-    print("Done")
 
 # use this function to repickle.
-def repickle(pkl_dir, n_proc=8):
-    a = input("Confirm that your pickle directory is " + str(pkl_dir) + " [y/N]")
-    if a != "y":
-        raise ValueError("pkl_dir not set")
-    print("This program will take a few hours to run")
-    print("This program requires", n_proc, "threads for disk I/O")
+def repickle(pkl_dir, n_proc=8, debug=False):
+    if not debug:
+        a = input("Confirm that your pickle directory is " + str(pkl_dir) + " [y/N]")
+        if a != "y":
+            raise ValueError("pkl_dir not set")
+        print("This program will take a few hours to run")
+        print("This program requires", n_proc, "threads for disk I/O")
+    else:
+        pass
     resplit=True
     lan_dic = {"C": 0,
                "C#": 1,
@@ -1121,11 +1033,10 @@ def repickle(pkl_dir, n_proc=8):
                "Rust": 10,
                "Shell": 11}
     train,valid=get_data_set(lan_dic,load=not resplit, save=resplit)
-    vocab_batch_pickle(pkl_dir, train, valid, n_proc)
+    vocab_batch_pickle(pkl_dir, train, valid, n_proc, debug)
 
     print("Done repickling")
 
 
-if __name__=="__main__":
-    from ai.deeplearning.fileinput import pkl_dir
-    main6(pkl_dir)
+if __name__ == '__main__':
+    repickle_vocab_pickle()
