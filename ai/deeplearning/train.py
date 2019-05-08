@@ -37,7 +37,7 @@ def datetime_filename():
     return datetime.datetime.now().strftime("%m_%d_%h_%H_%M_%S")
 
 
-def mixedtrain(training_data, validation_data, model, optimizer, starting_epoch, num_epochs, id_str, logfile):
+def mixedtrain(training_data, validation_data, model, optimizer, starting_epoch, num_epochs, id_str, logfile, debug=False):
     dq=deque(maxlen=100)
     mldq=deque(maxlen=100)
     atdq=deque(maxlen=100)
@@ -46,6 +46,8 @@ def mixedtrain(training_data, validation_data, model, optimizer, starting_epoch,
 
     for epoch in range(starting_epoch, num_epochs):
         for i,data_point in enumerate(training_data):
+            if debug and i==2:
+                break
             model.train()
             optimizer.zero_grad()
             input, target= data_point
@@ -87,11 +89,11 @@ def mixedtrain(training_data, validation_data, model, optimizer, starting_epoch,
 
             if i % 10000==0:
                 # wrap, so that python can del the torch objects
-                lall, lml, lat, lem, lvat, lhit=mixedeval(model, optimizer, epoch, i, id_str, validation_data)
+                lall, lml, lat, lem, lvat, lhit=mixedeval(model, optimizer, epoch, i, id_str, validation_data, debug)
                 logprint(logfile, "validation epoch %4d, all: %.6f, ml: %.6f, at: %.6f, em: %.6f, vat: %.6f, hit: %.4f" % (epoch, lall, lml, lat, lem, lvat, lhit))
 
 
-def mixedeval(model, optimizer, epoch, i, id_str, validation_data):
+def mixedeval(model, optimizer, epoch, i, id_str, validation_data, debug=False):
     val_losses = []
     mldq=[]
     atdq=[]
@@ -101,6 +103,8 @@ def mixedeval(model, optimizer, epoch, i, id_str, validation_data):
 
     save_model(model, optimizer, epoch, i, id_str)
     for j, data_point in enumerate(validation_data):
+        if debug and j==2:
+            break
         if j < 100:
             model.eval()
             input, target = data_point
@@ -225,12 +229,14 @@ def mixedeval(model, optimizer, epoch, i, id_str, validation_data):
 #     return np.mean(val_losses), np.mean(mldq), np.mean(atdq), np.mean(emdq), np.mean(vatdq), np.mean(hitdq)
 #
 
-def train(training_data, validation_data, model, optimizer, starting_epoch, num_epochs, id_str, logfile, input_long=False):
+def train(training_data, validation_data, model, optimizer, starting_epoch, num_epochs, id_str, logfile, input_long=False, debug=False):
 
     dq=deque(maxlen=100)
 
     for epoch in range(starting_epoch, num_epochs):
         for i,data_point in enumerate(training_data):
+            if debug and i==2:
+                break
             model.train()
             optimizer.zero_grad()
             input, target= data_point
@@ -262,16 +268,18 @@ def train(training_data, validation_data, model, optimizer, starting_epoch, num_
 
             if i % 10000==0:
                 # wrap, so that python can del the torch objects
-                val_loss, hit_percentage=eval(model, optimizer, epoch, i, id_str, validation_data, input_long=input_long)
+                val_loss, hit_percentage=eval(model, optimizer, epoch, i, id_str, validation_data, input_long=input_long, debug=debug)
                 logprint(logfile, "validation epoch %4d, all: %.6f, hit: %.4f" % (epoch, val_loss, hit_percentage))
 
 
-def eval(model, optimizer, epoch, i, id_str, validation_data, input_long=False):
+def eval(model, optimizer, epoch, i, id_str, validation_data, input_long=False, debug=False):
     val_losses = []
 
     save_model(model, optimizer, epoch, i, id_str)
     for j, data_point in enumerate(validation_data):
         if j < 100:
+            if debug and j == 2:
+                break
             model.eval()
             input, target = data_point
             if input_long:
@@ -344,7 +352,7 @@ def load_model(computer, optim, starting_epoch, starting_iteration, savestr):
     return computer, optim, highestepoch, highestiter
 
 
-def lstm_train():
+def lstm_train(num_epochs=50, debug=False):
     """
     Trains a character based LSTM model.
     :return:
@@ -376,9 +384,9 @@ def lstm_train():
     vig=TimeSeriesIG(v,lan_dic, 64)
     traindl=DataLoader(tig,batch_size=8,shuffle=True,num_workers=8)
     validdl=DataLoader(vig,batch_size=8,shuffle=True,num_workers=8)
-    train(traindl, validdl, computer, optimizer, 0, 50, id_str, logfile=logfile)
+    train(traindl, validdl, computer, optimizer, 0, num_epochs, id_str, logfile=logfile, debug=debug)
 
-def bigram_train():
+def bigram_train(num_epochs=50, debug=False):
     computer= LSTMWrapper(input_size=10000,
                            hidden_size=128,
                            num_layers=8)
@@ -410,11 +418,11 @@ def bigram_train():
 
     # print(tig[1])
     optimizer=Adam(computer.parameters(),lr=0.001)
-    train(tig, vig, computer, optimizer, 0, 50, id_str, logfile=logfile)
+    train(tig, vig, computer, optimizer, 0, num_epochs, id_str, logfile=logfile, debug=debug)
 
 
 
-def bigram_bow_train(load=False, resplit=False):
+def bigram_bow_train(load=False, resplit=False, num_epochs=50, debug=False):
     computer= BOW_model(hidden_factor=64)
     computer.cuda()
     computer.reset_parameters()
@@ -450,11 +458,11 @@ def bigram_bow_train(load=False, resplit=False):
 
     # print(tig[1])
     optimizer=Adam(computer.parameters(),lr=0.001)
-    train(tig, vig, computer, optimizer, 0, 50, id_str, logfile=logfile)
+    train(tig, vig, computer, optimizer, 0, num_epochs, id_str, logfile=logfile,debug=debug)
 
 
 
-def vocab_lstm_train(load=False, resplit=False):
+def vocab_lstm_train(load=False, resplit=False, num_epochs=50, debug=False):
     vocab_size=5000
 
     computer= LSTM_vocab(vocab_size=vocab_size)
@@ -497,9 +505,9 @@ def vocab_lstm_train(load=False, resplit=False):
     vig=VocabIG(v, lan_dic, vocab_size, lookup)
     traindl=DataLoader(tig,collate_fn=pad_collate,batch_size=bs,shuffle=True,num_workers=8)
     validdl=DataLoader(vig,collate_fn=pad_collate,batch_size=bs,shuffle=True,num_workers=8)
-    train(traindl, validdl, computer, optimizer, highestepoch, 50, id_str, logfile=logfile, input_long=True)
+    train(traindl, validdl, computer, optimizer, highestepoch, num_epochs, id_str, logfile=logfile, input_long=True, debug=debug)
 
-def vocab_bow_train(load=False, resplit=False):
+def vocab_bow_train(load=False, resplit=False, num_epochs=50, debug=False):
     vocab_size=5000
     max_len=100
 
@@ -537,10 +545,10 @@ def vocab_bow_train(load=False, resplit=False):
     vig=VocabIGpkl(v, lan_dic, vocab_size, max_len, bow=True)
     traindl=DataLoader(tig,batch_size=bs,shuffle=False,num_workers=8)
     validdl=DataLoader(vig,batch_size=bs,shuffle=False,num_workers=8)
-    train(traindl, validdl, computer, optimizer, highestepoch, 50, id_str, logfile=logfile)
+    train(traindl, validdl, computer, optimizer, highestepoch, num_epochs, id_str, logfile=logfile, debug=debug)
 
 
-def vocab_bow_train_batch_cache(load=False, resplit=False):
+def vocab_bow_train_batch_cache(load=False, resplit=False, num_epochs=50, debug=False):
     vocab_size=5000
     max_len=100
 
@@ -576,11 +584,11 @@ def vocab_bow_train_batch_cache(load=False, resplit=False):
     bs=256
     tig=VocabIGBatchpkl(vocab_size=vocab_size, max_len=max_len, batch_size=bs, bow=True)
     vig=VocabIGBatchpkl(vocab_size=vocab_size, max_len=max_len, batch_size=bs, bow=True, valid=True)
-    train(tig, vig, computer, optimizer, highestepoch, 50, id_str, logfile=logfile)
+    train(tig, vig, computer, optimizer, highestepoch, num_epochs, id_str, logfile=logfile, debug=debug)
 
 
 
-def bow_transformer_cache(load=False, resplit=False):
+def bow_transformer_cache(load=False, resplit=False, num_epochs=50, debug=False):
     """
     I am happy with this model.
     I also want to see the performance of the Normal Transformer.
@@ -613,10 +621,10 @@ def bow_transformer_cache(load=False, resplit=False):
     bs=256
     tig=VocabIGBatchpkl(vocab_size=vocab_size, max_len=max_len, batch_size=bs, bow=True)
     vig=VocabIGBatchpkl(vocab_size=vocab_size, max_len=max_len, batch_size=bs, bow=True, valid=True)
-    train(tig, vig, computer, optimizer, highestepoch, 50, id_str, logfile=logfile)
+    train(tig, vig, computer, optimizer, highestepoch, num_epochs, id_str, logfile=logfile, debug=debug)
 
 
-def standard_transformer_cache(load=False, resplit=False):
+def standard_transformer_cache(load=False, resplit=False, num_epochs=50, debug=False):
     """
     I am happy with this model.
     I also want to see the performance of the Normal Transformer.
@@ -663,7 +671,7 @@ def standard_transformer_cache(load=False, resplit=False):
     bs=64
     tig=VocabIGBatchpkl(vocab_size=vocab_size, max_len=max_len, batch_size=bs, bow=False)
     vig=VocabIGBatchpkl(vocab_size=vocab_size, max_len=max_len, batch_size=bs, bow=False, valid=True)
-    train(tig, vig, computer, optimizer, highestepoch, 50, id_str, logfile=logfile, input_long=True)
+    train(tig, vig, computer, optimizer, highestepoch, num_epochs, id_str, logfile=logfile, input_long=True, debug=debug)
 
 
 
@@ -711,7 +719,7 @@ def standard_transformer_cache(load=False, resplit=False):
 #
 
 
-def mixed_bow_transformer_cache(load=False):
+def mixed_bow_transformer_cache(load=False, num_epochs=100, debug=False):
     """
     :param load: load the newest model available.
 
@@ -745,10 +753,10 @@ def mixed_bow_transformer_cache(load=False):
 
     tig=VocabIGBatchpkl(vocab_size=vocab_size, max_len=max_len, batch_size=bs, bow=True)
     vig=VocabIGBatchpkl(vocab_size=vocab_size, max_len=max_len, batch_size=bs, bow=True, valid=True)
-    mixedtrain(tig, vig, model, optimizer, highestepoch,  id_str=id_str, num_epochs=100, logfile=logfile)
+    mixedtrain(tig, vig, model, optimizer, highestepoch,  id_str=id_str, num_epochs=num_epochs, logfile=logfile, debug=debug)
 
 
-def mixed_bow_transformer_cache_2(load=False):
+def mixed_bow_transformer_cache_2(load=False, num_epochs=100, debug=False):
     """
     :param load: load the newest model available.
 
@@ -782,8 +790,8 @@ def mixed_bow_transformer_cache_2(load=False):
 
     tig=VocabIGBatchpkl(vocab_size=vocab_size, max_len=max_len, batch_size=bs, bow=True)
     vig=VocabIGBatchpkl(vocab_size=vocab_size, max_len=max_len, batch_size=bs, bow=True, valid=True)
-    mixedtrain(tig, vig, model, optimizer, highestepoch,  id_str=id_str, num_epochs=100, logfile=logfile)
+    mixedtrain(tig, vig, model, optimizer, highestepoch,  id_str=id_str, num_epochs=num_epochs, logfile=logfile, debug=debug)
 
 
 if __name__=="__main__":
-    standard_transformer_cache()
+    mixed_bow_transformer_cache_2()
