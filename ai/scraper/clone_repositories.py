@@ -12,6 +12,7 @@ from collections import deque
 import pickle
 import shutil
 import traceback
+basedir=Path("D:\Git\language\scraper")
 
 class LanguageManager():
 
@@ -22,7 +23,6 @@ class LanguageManager():
         self.deque=deque(maxlen=maxlen)
 
     def get_dir(self):
-        basedir = Path(os.path.dirname(os.path.realpath(__file__)))
         dir=basedir.parent /"trdata/languages"/self.language
         dir.mkdir(exist_ok=True)
         return dir
@@ -54,7 +54,7 @@ class LanguageManager():
 class CloneManager():
 
     def __init__(self, reset=False, json_idx=0, item_idx=0, load=True, save=True):
-        self.basedir = Path(os.path.dirname(os.path.realpath(__file__)))
+        self.basedir = basedir
         self.datadir = self.basedir / "items"
         self.configdir=self.basedir/"clone_config"
         self.configdir.mkdir(exist_ok=True)
