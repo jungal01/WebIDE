@@ -16,6 +16,8 @@
 
 ## Known Issues
 
+  * When deleting, all files get deleted
+
 ## Potential Issues
 
   * The project in it's current state may not be suitable for multiple users.
