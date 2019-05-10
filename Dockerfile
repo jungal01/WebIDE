@@ -12,6 +12,10 @@ RUN apt-get -y install python3-pip
 
 RUN pip3 install -r requirements.txt
 
-ENTRYPOINT ["python3"]
+RUN build-project.sh
 
-CMD ["./server/app.py"]
+RUN conda activate python37
+
+RUN export FLASK_APP=./server/app.py
+
+RUN flask run --host=0.0.0.0

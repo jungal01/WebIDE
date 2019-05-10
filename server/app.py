@@ -1,5 +1,59 @@
+'''
+Author: Kevin Cobble
+Date: 5-8-2019
+Description:
+
+The purpose of this file is to actually host the overal server that the application runs on.
+The bas structure is Flask.
+
+#Function : getfile
+This function will take the file that is uploaded from the HTML and initially check to see if it is a file that is able to be run,
+this is based off of the extension of the file. The function then will read the fiile and upload the data, including language, based on the
+extension back to the html/javascript. This is done through the use of the cookie data structure, and JSON.
+
+#Function : allowed_file
+This function just checks the extension of the file against a set of allowed extensions to make sure that the file is readable.
+It does not output an error, but later it should be implemented with an error that the user can see.
+
+#Function : index
+Calls the initial index page
+
+#Function : aboutPage
+An incomplete page that is called. We ran out of time before Eros could implement it and did not have a chance to remove it.
+
+#Function : compile
+A self testing function with try and except statements, that if it produces an error, it will show it to the user.
+This is both to catch errors within the code that is to be executed by the compiler, and within this server itself.
+It initially recieves info from a javascript page, including language, code, and file name. It will then adjust
+variables based on those variables so that everything is set up for either the AI to run or not. Whether the AI is run, or not
+will not affect the compiler itself. The compiler would be called after the AI, if it was run. Either way, the server
+adjusts variables so that the compiler can run as well. Once it gets information back from the compiler, it generates an output to be
+sent back to the website.
+
+#Function : bitecode
+This function is ment to be a download function to retrieve the appropriate bite files that are generated for
+some languages. However, due to time limitations, this was not implemented properly and recieved little attention
+in comparison to other pieces of the code.
+
+
+# How to Run
+To acces the server based outside of a local host, you must run:
+conda activate python37
+export FLASK_APP=app.py
+flask run --host=0.0.0.0
+
+running the docker is the most effective way to run it if you are running on local host. Due to time constraits, Jason had me implement
+the export method when actually using the school computer.
+However, it would not be a complex fix for the docker system. I believe it is currently set up so that you could, in theory run it just
+the docker.
+
+However to run it effectively, there is a requirement that you have conda.
+
+'''
+
+
 import sys, os, random, json
-from identify_language import prepare_model_lookup, persistent_identify
+import language
 from flask import *
 from werkzeug.utils import secure_filename
 
@@ -9,18 +63,16 @@ app=Flask(__name__)
 UPLOAD_FOLDER="/uploads"
 ALLOWED_EXTENSIONS = set(['txt','py','js','java','cpp','c','rs'])
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-model, lookup= prepare_model_lookup()
 
 @app.route('/getfile', methods=['GET','POST'])
-def getfile():
+def getfile(): #Retrieves files that client is uploading
     if request.method == 'POST':
-        #file = request.form['param1']
         file= request.files['myfile']
         filename = secure_filename(file.filename)
 
         file.save(os.path.join("importCode",filename))
 
-        if allowed_file(filename):
+        if allowed_file(filename): #Function call to checks file type against readible types
             with open("./importCode/"+filename) as f:
                 file_content = f.read()
                 f.close()
@@ -32,7 +84,7 @@ def getfile():
 
     return render_template('index.html',data="Error=AI:Failure to load File")
 
-def allowed_file(filename):
+def allowed_file(filename): # Checks file type
     extension = filename.rsplit('.',1)[1].lower()
     if ('.' in filename and extension in ALLOWED_EXTENSIONS):
         return True
@@ -62,8 +114,6 @@ def compile(): #Takes code from JS and returns output to JS
     print("Got code, language or api, name")
     print("Code: "+code)
     print("Lang or AI: "+lang)
-    if name == '':
-        name = 'Default'
     print("Name: "+name)
 
     try: # Try to call the specific language
@@ -113,7 +163,7 @@ def compile(): #Takes code from JS and returns output to JS
             lang = '.txt'
             with open(name+lang, 'w') as f:
                 f.write(code)
-            version, confidence = persistent_identify(model, lookup, name+lang)
+            version, confidence = language.identify(name+lang)
             version = version.lower()
             print("Identified language as: "+version)
     except Exception as e:
@@ -135,19 +185,19 @@ def compile(): #Takes code from JS and returns output to JS
                 lang='.py'
             elif version == 'rust':
                 lang = '.rs'
-            elif version == 'lua':
+            elif version = 'lua':
                 lang = '.lua'
-            elif version == 'c++':
+            elif version = 'c++':
                 version = 'cpp'
                 lang = '.cpp'
-            elif version == 'go':
+            elif version = 'go':
                 lang = '.go'
-            elif version == 'objective-c':
+            elif version = 'objective-c':
                 version = 'objc'
                 lang = '.m'
-            elif version == 'ruby':
+            elif version = 'ruby':
                 lang = '.rb'
-            elif version == 'shell':
+            elif version = 'shell':
                 version = 'bash'
                 lang = '.sh'
 
@@ -188,11 +238,10 @@ def compile(): #Takes code from JS and returns output to JS
         result = str(e)
 
     os.system("rm {}".format(name+lang))
-    os.system("rm output.txt")
     return make_response(result)
 
 @app.route('/bitecode', methods=['POST'])
-def bitecode():
+def bitecode(): # looks for specific bit files and then returns their contents to JS for download
     exclude = ['call_compiler']
     fileNames = ['cclang','ccpp','cgo','cObjcpp', 'cObjc','crust','cfortran']
     version = None
