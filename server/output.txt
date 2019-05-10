@@ -1,5 +1,0 @@
-Default.m:8:10: fatal error: 'objpak.h' file not found
-#include <objpak.h>
-         ^~~~~~~~~~
-1 error generated.
-./call-compiler: line 261: ./cObjc: No such file or directory
