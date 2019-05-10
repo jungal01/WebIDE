@@ -10,6 +10,7 @@
   The [new features](#new-features) section are for features that don't exist yet, but will be added.
   The [improving features](#improving-features) section is for adding additional usage to features that currently exist.
   The [new languages](#new-Languages) section is for languages that will be added in the future.
+  The [miscellaneous](#miscellaneous) section is for all aspects of the project that do not strictly fit the other categories.
 
 ## Issues Being Fixed
 
