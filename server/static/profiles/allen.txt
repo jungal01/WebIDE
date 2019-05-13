@@ -1,5 +1,0 @@
-Allen
-
-I contributed to the project through the numerous bash scripts and experiments I conducted.
-I helped provide several design decisions in appearance, functionality, and technologies.
-I'm also responsible for language support within WebIDE.
