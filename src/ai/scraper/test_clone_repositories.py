@@ -6,7 +6,7 @@ class CloneRepoTest(unittest.TestCase):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.cm=CloneManager(load=False, save=False)
+        self.cm=CloneManager()
 
     def test_language_manager_init(self):
         lm = LanguageManager("Python")

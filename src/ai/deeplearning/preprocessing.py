@@ -12,7 +12,7 @@ import operator
 import pickle
 import os
 
-corpus_dir=Path("D:/")/"Git"/"trdata"/"languages"
+corpus_dir=Path("D:")/"Git"/"trdata"/"languages"
 lan_dic = {"C": 0,
            "C#": 1,
            "C++": 2,
@@ -27,54 +27,54 @@ lan_dic = {"C": 0,
            "Shell": 11}
 
 
-#
-# def parallel_process(array, function, n_jobs=16, use_kwargs=False, front_num=3):
-#     """
-#         A parallel version of the map function with a progress bar.
-#
-#         Args:
-#             array (array-like): An array to iterate over.
-#             function (function): A python function to apply to the elements of array
-#             n_jobs (int, default=16): The number of cores to use
-#             use_kwargs (boolean, default=False): Whether to consider the elements of array as dictionaries of
-#                 keyword arguments to function
-#             front_num (int, default=3): The number of iterations to run serially before kicking off the parallel job.
-#                 Useful for catching bugs
-#         Returns:
-#             [function(array[0]), function(array[1]), ...]
-#     """
-#     # We run the first few iterations serially to catch bugs
-#     if front_num > 0:
-#         front = [function(**a) if use_kwargs else function(a) for a in array[:front_num]]
-#     # If we set n_jobs to 1, just run a list comprehension. This is useful for benchmarking and debugging.
-#     if n_jobs==1:
-#         return front + [function(**a) if use_kwargs else function(a) for a in tqdm(array[front_num:])]
-#     # Assemble the workers
-#     with ProcessPoolExecutor(max_workers=n_jobs) as pool:
-#         # Pass the elements of array into function
-#         if use_kwargs:
-#             futures = [pool.submit(function, **a) for a in array[front_num:]]
-#         else:
-#             futures = [pool.submit(function, a) for a in array[front_num:]]
-#         kwargs = {
-#             'total': len(futures),
-#             'unit': 'it',
-#             'unit_scale': True,
-#             'leave': True
-#         }
-#         # Print out the progress as tasks complete
-#         for f in tqdm(as_completed(futures), **kwargs):
-#             pass
-#     out = []
-#     # Get the results from the futures.
-#     for i, future in tqdm(enumerate(futures)):
-#         try:
-#             out.append(future.result())
-#         except Exception as e:
-#             out.append(e)
-#     return front + out
-#
-# # this function will run for an hour
+
+def parallel_process(array, function, n_jobs=16, use_kwargs=False, front_num=3):
+    """
+        A parallel version of the map function with a progress bar.
+
+        Args:
+            array (array-like): An array to iterate over.
+            function (function): A python function to apply to the elements of array
+            n_jobs (int, default=16): The number of cores to use
+            use_kwargs (boolean, default=False): Whether to consider the elements of array as dictionaries of
+                keyword arguments to function
+            front_num (int, default=3): The number of iterations to run serially before kicking off the parallel job.
+                Useful for catching bugs
+        Returns:
+            [function(array[0]), function(array[1]), ...]
+    """
+    # We run the first few iterations serially to catch bugs
+    if front_num > 0:
+        front = [function(**a) if use_kwargs else function(a) for a in array[:front_num]]
+    # If we set n_jobs to 1, just run a list comprehension. This is useful for benchmarking and debugging.
+    if n_jobs==1:
+        return front + [function(**a) if use_kwargs else function(a) for a in tqdm(array[front_num:])]
+    # Assemble the workers
+    with ProcessPoolExecutor(max_workers=n_jobs) as pool:
+        # Pass the elements of array into function
+        if use_kwargs:
+            futures = [pool.submit(function, **a) for a in array[front_num:]]
+        else:
+            futures = [pool.submit(function, a) for a in array[front_num:]]
+        kwargs = {
+            'total': len(futures),
+            'unit': 'it',
+            'unit_scale': True,
+            'leave': True
+        }
+        # Print out the progress as tasks complete
+        for f in tqdm(as_completed(futures), **kwargs):
+            pass
+    out = []
+    # Get the results from the futures.
+    for i, future in tqdm(enumerate(futures)):
+        try:
+            out.append(future.result())
+        except Exception as e:
+            out.append(e)
+    return front + out
+
+# this function will run for an hour
 
 
 def sub_list_matcher(file_list):
@@ -110,7 +110,7 @@ def combine_dictionary(base, result_dicts, thres=10):
     cutoff=sorted_counts[0:len(sorted_counts)//10]
     return {k:v for k,v in cutoff}
 
-def generate_dictionary(n_proc=8,bs=1000, save=True, debug=False):
+def generate_dictionary(n_proc=8,bs=1000, save=True):
     """
     This function counts all files.
     The dictionary will be several gigabytes big with naive run and takes 1 hour, so an algorithm is necessary.
@@ -127,15 +127,10 @@ def generate_dictionary(n_proc=8,bs=1000, save=True, debug=False):
         if dir.is_dir():
             print("counting", dir)
             file_list=list(dir.iterdir())
-            if debug:
-                file_list=file_list[1:100]
             batches_n=len(file_list)//bs
             batches=[file_list[0+bs*b:bs+bs*b] for b in range(batches_n+1)]
 
             results= Parallel(n_jobs=n_proc)(delayed(sub_list_matcher)(file_list) for file_list in batches)
-            if debug:
-                for file_list in batches:
-                    sub_list_matcher(file_list)
             word_count=combine_dictionary(word_count, results)
 
 

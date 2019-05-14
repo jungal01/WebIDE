@@ -134,21 +134,3 @@ class CloneRepoTest(unittest.TestCase):
         file = Path(dir_path.parent / "testfile")
         model, lookup = get_model_lookup()
         persistent_test(model, lookup, file)
-
-    def test_legacy_models_1(self):
-        num_epochs=1
-        debug=True
-        mixed_bow_transformer_cache_2(num_epochs=num_epochs, debug=debug)
-        mixed_bow_transformer_cache(num_epochs=num_epochs, debug=debug)
-        standard_transformer_cache(num_epochs=num_epochs, debug=debug)
-        bow_transformer_cache(num_epochs=num_epochs, debug=debug)
-        vocab_bow_train_batch_cache(num_epochs=num_epochs, debug=debug)
-        vocab_bow_train(num_epochs=num_epochs, debug=debug)
-
-    def test_legacy_models_2(self):
-        num_epochs=1
-        debug=True
-        vocab_lstm_train(num_epochs=num_epochs, debug=debug)
-        bigram_bow_train(num_epochs=num_epochs, debug=debug)
-        bigram_train(num_epochs=num_epochs, debug=debug)
-        lstm_train(num_epochs=num_epochs, debug=debug)

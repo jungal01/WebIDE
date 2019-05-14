@@ -16,6 +16,6 @@ RUN build-project.sh
 
 RUN conda activate python37
 
-RUN export FLASK_APP=./server/app.py
+RUN export FLASK_APP=./src/app.py
 
 RUN flask run --host=0.0.0.0
