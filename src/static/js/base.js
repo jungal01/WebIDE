@@ -1,4 +1,8 @@
-var languages = {
+// This is the base JS file, it must be loaded after all other JS files are loaded to work properly.
+// Author: Kevin Cobble
+// Date: 5-8-2019
+
+var languages = { //List of languages that are supported by the site
     "AI": "Ai Detirmined",
     "C": ".c",
     "C++": ".cpp",
@@ -20,7 +24,7 @@ var cookies=[];
 var existingFiles = {};
 console.log(existingFiles)
 
-function extractContents(){
+function extractContents(){ //retrieves contents from the code box of the HTML, and other boxes to save and compile
     var code = document.getElementById("codebox").value;
     var lang = document.getElementById("language").value;
     var name = document.getElementById("filename").value;
@@ -30,7 +34,7 @@ function extractContents(){
     loadCookies();
 }
 
-function save(code="EmptyCode", language='AI', name='NoName') {
+function save(code="EmptyCode", language='AI', name='NoName') { //function that calls the save.js
     if (code == ""){code="NoCode"}
     if (language==""){language="AI"}
     if (name==""){name="Defualt"}
@@ -39,7 +43,7 @@ function save(code="EmptyCode", language='AI', name='NoName') {
     setCookie(name, cookieValue);
 }
 
-function loadCookies(){
+function loadCookies(){ //pulls the cookies from the local site so that it can load and produce different files, if any were saved
     //setTimeout(donothing,500);
     var cookies = getAllCookies();
     if (cookies.length != 0){
@@ -47,7 +51,7 @@ function loadCookies(){
     }
 }
 
-function populateFiles(fileList) {
+function populateFiles(fileList) { // creates the list elements that are on the side of the website that you can click on to load the coad
     var fileBar = document.getElementById("fileList");
     for (var i = 0; i< fileList.length; i++){
         let nameLangCode = fileList[i].split("=");
@@ -57,7 +61,7 @@ function populateFiles(fileList) {
         existingFiles[name]=code;
     }
     //location.reload();
-    for (var key in existingFiles) {
+    for (var key in existingFiles) { // this is the part that actually creates the elements and the click event for the code files
       if (key != ''){
         let name = key
         console.log(name)
@@ -81,7 +85,7 @@ function populateFiles(fileList) {
     }
 }
 
-function loadCode(filename){
+function loadCode(filename){ // this function is used by the function loadFile to load the code to the HTML
     var code = document.getElementById("codebox").value;
     var lang = document.getElementById("language").value;
     var name = document.getElementById("filename").value;
@@ -95,7 +99,7 @@ function loadCode(filename){
 
 }
 
-function saveFiles(){
+function saveFiles(){ // this is ment to save all of the current code from the side menu
     var txt = "Saving this file will overwrite any previous file with the same name. Are you sure you wish to continue?"
     var r = confirm(txt);
     if (r == true) {
@@ -110,7 +114,7 @@ function saveFiles(){
 
 }
 
-function removeFile(){
+function removeFile(){ // this removes the file from the diction, removes the relevent cookie, and then reloads the files, to remove it completely
     document.getElementById("codebox").value = "";
     document.getElementById("language").value="AI";
     var name = document.getElementById("filename").value;
@@ -130,7 +134,7 @@ function removeFile(){
     loadCookies();
 }
 
-function saveAll() {
+function saveAll() { //this will iterate over the dictionary that stories the cookies, and resave everything
     saveFiles();
     for (var key in existingFiles) {
         setCookie(key, existingFiles[key]);
@@ -139,28 +143,16 @@ function saveAll() {
     loadCookies();
 }
 
-function emptyAll(){
+function emptyAll(){ //this clears the page code box, and file name, and language
     document.getElementById("codebox").value = "";
     document.getElementById("language").value="AI";
     document.getElementById("filename").value="";
     document.getElementById('output').value='';
 }
 
-// function dataCollect(){
-//     var data = document.getElementById('fileDataUploaded').value;
-//     if (data != ""){
-//         var nameRest = data.split('=.');
-//         var name = nameRest[0];
-//         var langCode = data.split[1].split(':');
-//         var lang = '.'+langCode[0];
-//         var code = langCode[1];
-//         document.getElementById("filename").value = name;
-//         document.getElementById("codbox").value = code;
-//         if (lang in languages){document.getElementById("language").value = lang;}
-//     }
-// }
 
-$(window).bind("load", function() {
+
+$(window).bind("load", function() { //once the page is loaded, this function populates the aside with the files
     loadCookies();
     // dataCollect();
 });
@@ -168,7 +160,7 @@ $(window).bind("load", function() {
 
 
 
-function upload(file){
+function upload(file){ //passes the file the user wishes to upload to the server
     $.ajax({
         type: "POST",
         url: '/getfile',
@@ -177,13 +169,13 @@ function upload(file){
     });
 }
 
-function uploadFile(){
+function uploadFile(){  // calls the upload function so that the file can be uploaded to the server, this is used for the button click
     var file = document.getElementById("fileToUpload").value;
     upload(file);
     return false;
 }
 
-function loadFile(response){
+function loadFile(response){ //a function that is called after an upload to save the information as a cookie and then call loadCode
     var name = response.split("=",1)[0];
     var lang = response.split("=",1)[1].split(":::",1)[0];
     var code = response.split("=",1)[1].split(":::",1)[1];
@@ -191,12 +183,3 @@ function loadFile(response){
     loadCookies();
     loadCode(name);
 }
-
-
-//function handler(event){
-    //var target = $(event.target);
-    //if (target.is("p")){
-        //loadCode(target.text);
-    //}
-//}
-//$("p").click(handler).find("aside");

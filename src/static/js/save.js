@@ -1,8 +1,10 @@
+// Author: Eros
+
 function saveAs(){
     var textToWrite = document.getElementById('codebox').value;
     var textFileAsBlob = new Blob([textToWrite], {type: 'text/plain'});
     var fileNameToSaveAs = document.getElementById("filename").value+document.getElementById("language").value;
-    
+
     var downloadLink = document.createElement("a");
     downloadLink.download = fileNameToSaveAs;
     downloadLink.innerHTML = "Download File";
@@ -18,6 +20,6 @@ function saveAs(){
         downloadLink.style.display = "none";
         document.body.appendChild(downloadLink);
     }
-    
-    downloadLink.click();  
+
+    downloadLink.click();
 }

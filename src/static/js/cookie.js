@@ -1,3 +1,12 @@
+//Author: Kevin Cobble
+//Date: 5-8-2019
+
+// This file recieves information from the save function in base.js
+//it takes that information, and generates a cookie, and then saves that to the local browser
+// this file also retrieves said cookies when the page is loaded so that they can be loaded into the html
+// that function call happens in base.js and is loadCookies which calls getAllCookies
+
+
 function setCookie(filename="EmptyFile", code="NoCode") {
   var d = new Date();
   d.setTime(d.getTime() + (60*24*60*60*1000));

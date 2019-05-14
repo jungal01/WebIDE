@@ -1,3 +1,6 @@
+Author: Kevin Cobble
+Date: 5-8-2018
+
 run:
 
 docker build -t server-webide:latest .
@@ -5,4 +8,9 @@ docker build -t server-webide:latest .
 docker run -d -p 5000:5000 server-webide
 
 
+
+
+
+
+Notes used in creation of docker file and docker system with flask:
 https://medium.com/@angellom/build-a-docker-image-out-of-a-flask-project-6b22122ff0f0

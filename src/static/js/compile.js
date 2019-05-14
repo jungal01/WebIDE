@@ -1,3 +1,10 @@
+// Author: Kevin Cobble
+// Date: 5-8-2019
+
+//The whole purpose of this file is to be passed the code, language, and name of the file from base.js
+// upload it to the server
+// recieve the output from the server
+// and push it back to the HTML
 function compile(code, lang, name='nameMe'){
     $.ajax({
         type: "POST",

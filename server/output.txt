@@ -1,6 +1,0 @@
-<<<<<<< HEAD
-./call-compiler: line 49: ./ccpp: No such file or directory
-=======
-for shits
-and fucks
->>>>>>> 3d5f87f507156dcb5106d75fa23d9cc2266556b1
